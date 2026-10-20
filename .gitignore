@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vercel/
+.astro/
+src/generated/
+.env
+.env.*

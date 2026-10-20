@@ -1,0 +1,9 @@
+---
+import es from '../generated/home.es.html?raw';
+import en from '../generated/home.en.html?raw';
+import gl from '../generated/home.gl.html?raw';
+interface Props { lang: 'es' | 'en' | 'gl'; }
+const { lang } = Astro.props;
+const html = { es, en, gl }[lang];
+---
+<Fragment set:html={html} />
