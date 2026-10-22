@@ -1,16 +1,12 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: process.env.SITE_URL || 'https://alas.example',
   output: 'static',
-  adapter: vercel(),
+  adapter: cloudflare({ imageService: 'passthrough' }),
   integrations: [sitemap()],
-  i18n: {
-    defaultLocale: 'es',
-    locales: ['es', 'en', 'gl'],
-    routing: { prefixDefaultLocale: false }
-  }
+  session: false,
+  i18n: { defaultLocale: 'es', locales: ['es', 'en', 'gl'], routing: { prefixDefaultLocale: false } },
 });

@@ -1,6 +1,7 @@
 // Receives the contact form and creates a lead in the Notion CRM ("Clientes").
-// Needs the env var NOTION_TOKEN (the "Web ALAS" integration secret), set in Vercel.
+// Needs the secret NOTION_TOKEN (the "Web ALAS" integration), set in Cloudflare → Worker → Settings → Variables and Secrets.
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
@@ -34,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
   const mensaje = str(d.Notas, 5000);
   const idioma = IDIOMAS[str(d.idioma, 5)] ?? 'español';
 
-  const token = import.meta.env.NOTION_TOKEN ?? process.env.NOTION_TOKEN;
+  const token = (env as Record<string, string | undefined>).NOTION_TOKEN;
   if (!token) return json(500, { ok: false, error: 'config' });
 
   const properties: Record<string, unknown> = {
@@ -53,11 +54,17 @@ export const POST: APIRoute = async ({ request }) => {
     ...(mensaje ? [{ object: 'block', type: 'quote', quote: { rich_text: text(mensaje) } }] : []),
   ];
 
-  const r = await fetch('https://api.notion.com/v1/pages', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ parent: { database_id: DATABASE_ID }, properties, children }),
-  });
+  let r: Response;
+  try {
+    r = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ parent: { database_id: DATABASE_ID }, properties, children }),
+    });
+  } catch (e) {
+    console.error('Notion unreachable', e);
+    return json(502, { ok: false, error: 'notion' });
+  }
   if (!r.ok) {
     console.error('Notion error', r.status, await r.text());
     return json(502, { ok: false, error: 'notion' });
