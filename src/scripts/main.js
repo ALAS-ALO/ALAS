@@ -499,14 +499,14 @@
       web: { ic: 'web', lab: 'Web', sub: 'Cara pública' },
       form: { ic: 'form', lab: 'Formulario', sub: 'Nuevo encargo' },
       hub: { ic: 'hub', lab: 'Gestión interna', sub: 'CRM y proyectos', big: true },
-      agent: { ic: 'agent', lab: 'Agentes automatizados', sub: 'Informes preliminares ·|análisis normativo ·|propuestas de aproximación' },
+      agent: { ic: 'agent', lab: 'Agentes automatizados', sub: 'Informes preliminares ·|Análisis normativo ·|Propuestas de aproximación' },
       bim: { ic: 'bim', lab: 'Modelo BIM', sub: 'Gemelo digital del edificio' },
-      docs: { ic: 'docs', lab: 'Documentación y sistemas', sub: 'Estructura · MEP · planimetría ·|mediciones · presupuestos ·|memorias' },
+      docs: { ic: 'docs', lab: 'Documentación y sistemas', sub: 'Estructura · MEP · Planimetría ·|Mediciones · Presupuestos ·|Memorias' },
       build: { ic: 'build', lab: 'Construcción', sub: 'Obra sobre el gemelo|digital vivo' },
-      gov: { ic: 'gov', lab: 'Administración', sub: 'Tramitación · gestión ·|incidencias' },
-      end: { ic: 'done', lab: 'Proyecto cerrado', sub: 'Entrega y archivo', end: true }
+      gov: { ic: 'gov', lab: 'Administración', sub: 'Tramitación · Gestión ·|Resolución de incidencias' },
+      end: { ic: 'done', lab: 'Proyecto cerrado', sub: 'Entrega · Archivo', end: true }
     };
-    var LOOP = { lab: 'Iteraciones con IA', sub: 'Alternativas proyectuales ·|propuestas visuales' };
+    var LOOP = { lab: 'Iteraciones con IA', sub: 'Alternativas proyectuales ·|Propuestas visuales' };
     var STEPS = [
       { a: 'web', b: 'form', txt: 'El cliente entra en la web y rellena el formulario.' },
       { a: 'form', b: 'hub', txt: 'El formulario crea el proyecto en la herramienta de gestión.' },
@@ -519,30 +519,48 @@
       { a: 'build', b: 'bim', k: 'sync', txt: 'Obra y gemelo digital avanzan juntos: el modelo sigue vivo y genera alternativas durante la obra.' },
       { a: 'build', b: 'gov', txt: 'Ante la Administración tramitamos, gestionamos y resolvemos incidencias.' },
       { a: 'gov', b: 'hub', txt: 'La respuesta vuelve a la gestión interna.' },
-      { a: 'hub', b: 'end', bend: -.1, txt: 'El proyecto se entrega y se cierra.' },
-      { a: 'end', b: 'hub', bend: -.1, k: 'close', txt: 'El cierre vuelve a la gestión interna: el ciclo se completa y queda listo para el siguiente encargo.' }
+      { a: 'hub', b: 'end', txt: 'El proyecto se entrega y se cierra.' },
+      { a: 'end', b: 'hub', k: 'close', txt: 'El cierre vuelve a la gestión interna: el ciclo se completa y queda listo para el siguiente encargo.' }
     ];
     var LOOPS = [['hub', 'agent', 'bim', 'docs'], ['hub', 'build', 'gov']];
     var LAY = {
       wide: { w: 1200, h: 650, r: 30, R: 44, fs: 15, ss: 12, lh: 17, bend: .16, lr: 13, side: 'top', sub: 3,
-        p: { web: [80, 345], form: [255, 345], hub: [600, 345], agent: [420, 175], bim: [600, 132], docs: [780, 175], build: [780, 518], gov: [420, 518], end: [1115, 345] },
+        p: { web: [80, 345], form: [255, 345], hub: [600, 345], agent: [420, 175], bim: [600, 132], docs: [780, 175], build: [780, 515], gov: [420, 515], end: [1115, 345] },
         l: { web: 'b', form: 'b', hub: 'b', agent: 'l', bim: 'b', docs: 'r', build: 'r', gov: 'l', end: 'b' } },
       narrow: { w: 360, h: 1010, r: 22, R: 30, fs: 12.5, ss: 10.5, lh: 14, bend: -.16, hubBend: .05, lr: 10, side: 'left', sub: 4,
         p: { web: [40, 36], form: [40, 130], hub: [64, 520], agent: [150, 250], bim: [150, 385], docs: [150, 520], build: [150, 680], gov: [150, 815], end: [64, 960] },
         l: { web: 'r', form: 'r', hub: 'b', agent: 'r', bim: 'r', docs: 'r', build: 'r', gov: 'r', end: 'r' } }
     };
-    var T_EDGE = 1050, T_LOOP = 1700, T_SYNC = 2600, T_DWELL = 520, T_FINAL = 2200, T_HOLD = 3600, T_FADE = 700;
+    var T_EDGE = 1050, T_LOOP = 1700, T_SYNC = 3400, T_DWELL = 520, FADE_ORDER = ['web', 'form', 'agent', 'bim', 'docs', 'build', 'gov', 'end'], F0 = 700, F_GAP = 280, F_DUR = 450;
     var starts = [], tt = 400;
-    function dur(s) { return s.k === 'loop' ? T_LOOP : s.k === 'sync' ? T_SYNC : T_EDGE; }
+    function dur(s) { return s.k === 'loop' ? T_LOOP : s.k === 'sync' ? T_SYNC : s.k === 'close' ? T_EDGE * 1.2 : T_EDGE; }
     STEPS.forEach(function (s) { starts.push(tt); tt += dur(s) + T_DWELL; });
-    var T_END = tt, T_CYCLE = T_END + T_FINAL + T_HOLD + T_FADE;
+    // the close: the closed project lights up, its pulse runs back to internal management, which blinks while every other node fades out in order, and then fades itself
+    var T_END = tt - T_DWELL, HUB_FADE = T_END + F0 + FADE_ORDER.length * F_GAP + 700, T_CYCLE = HUB_FADE + F_DUR + 900;
+    function fadeAt(k) { return k === 'hub' ? HUB_FADE : T_END + F0 + FADE_ORDER.indexOf(k) * F_GAP; }
     var L, mode = '', svg, el = {}, edges = [], dot, shown = {}, lastStep = -2, finalOn = false, syncOn = false, active = false, clock = 0, last = null;
 
     function mk(tag, at, parent) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (parent) parent.appendChild(e); return e; }
     function rad(k) { return NODES[k].big ? L.R : L.r; }
     function centroid(ks) { var x = 0, y = 0; ks.forEach(function (k) { x += L.p[k][0]; y += L.p[k][1]; }); return [x / ks.length, y / ks.length]; }
     function loopCentre() { var P = L.p.bim, d = rad('bim') + L.lr + 3; return L.side === 'top' ? [P[0], P[1] - d] : [P[0] - d, P[1]]; }
+    function circle3(p1, p2, p3) {
+      var ax = p1[0], ay = p1[1], bx = p2[0], by = p2[1], cx = p3[0], cy = p3[1], d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+      var ux = ((ax * ax + ay * ay) * (by - cy) + (bx * bx + by * by) * (cy - ay) + (cx * cx + cy * cy) * (ay - by)) / d, uy = ((ax * ax + ay * ay) * (cx - bx) + (bx * bx + by * by) * (ax - cx) + (cx * cx + cy * cy) * (bx - ax)) / d;
+      return [ux, uy, Math.hypot(ax - ux, ay - uy)];
+    }
+    function arcPath(a, b, O) {
+      var A = L.p[a], B = L.p[b], ta = Math.atan2(A[1] - O[1], A[0] - O[0]), tb = Math.atan2(B[1] - O[1], B[0] - O[0]), d = tb - ta;
+      while (d > Math.PI) d -= 2 * Math.PI; while (d <= -Math.PI) d += 2 * Math.PI;
+      var sg = d > 0 ? 1 : -1, t0 = ta + sg * (rad(a) + 5) / O[2], t1 = tb - sg * (rad(b) + 9) / O[2];
+      return 'M' + (O[0] + O[2] * Math.cos(t0)).toFixed(1) + ' ' + (O[1] + O[2] * Math.sin(t0)).toFixed(1) + 'A' + O[2].toFixed(1) + ' ' + O[2].toFixed(1) + ' 0 0 ' + (sg > 0 ? 1 : 0) + ' ' + (O[0] + O[2] * Math.cos(t1)).toFixed(1) + ' ' + (O[1] + O[2] * Math.sin(t1)).toFixed(1);
+    }
     function edgePath(s) {
+      if (mode === 'wide') {
+        var P = L.p, hy = P.hub[1];
+        if ((s.a === 'agent' && s.b === 'bim') || (s.a === 'bim' && s.b === 'docs')) return arcPath(s.a, s.b, circle3(P.agent, P.bim, P.docs));
+        if (s.a === 'build' && s.b === 'gov') return arcPath(s.a, s.b, circle3(P.build, [P.bim[0], 2 * hy - P.bim[1]], P.gov));
+      }
       var A = L.p[s.a], B = L.p[s.b], mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len, c = [mx, my];
       var loop = LOOPS.filter(function (g) { return g.indexOf(s.a) > -1 && g.indexOf(s.b) > -1; })[0];
       if (s.bend) c = [mx + nx * len * s.bend, my + ny * len * s.bend];
@@ -593,8 +611,8 @@
       STEPS.forEach(function (s) {
         if (s.k === 'sync') { edges.push(null); return; }
         var d = s.k === 'loop' ? loopPath() : edgePath(s);
-        var ghost = mk('path', { d: d, 'class': 'af-ghost', 'marker-end': 'url(#af-ar-off)' }, gE);
-        var live = mk('path', { d: d, 'class': 'af-live' }, gE), len = live.getTotalLength();
+        var ghost = s.k === 'close' ? null : mk('path', { d: d, 'class': 'af-ghost', 'marker-end': 'url(#af-ar-off)' }, gE);
+        var live = mk('path', { d: d, 'class': 'af-live' + (s.k === 'close' ? ' af-orange' : '') }, gE), len = live.getTotalLength();
         live.style.strokeDasharray = len + ' ' + len; live.style.strokeDashoffset = len;
         edges.push({ ghost: ghost, live: live, len: len, done: false });
       });
@@ -626,25 +644,30 @@
     function ease(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
     function render(t) {
       if (!svg) return;
-      var cyc = reduce ? T_END + T_FINAL : t % T_CYCLE, fade = cyc > T_END + T_FINAL + T_HOLD ? 1 - (cyc - T_END - T_FINAL - T_HOLD) / T_FADE : 1;
-      svg.style.opacity = Math.max(0, fade).toFixed(3);
-      var reached = { web: true }, cur = -1, dotP = null, sync = false, loopSeen = false;
+      var cyc = reduce ? T_END : t % T_CYCLE;
+      var reached = { web: true }, cur = -1, dotP = null, dotO = false, sync = false, loopSeen = false;
       STEPS.forEach(function (s, i) {
         var p = Math.max(0, Math.min(1, (cyc - starts[i]) / dur(s)));
         if (cyc >= starts[i]) cur = i;
         if (s.k === 'sync') { if (p > 0 && p < 1) sync = true; return; }
         var e = edges[i], k = ease(p); e.live.style.strokeDashoffset = (e.len * (1 - k)).toFixed(1);
-        var done = p >= 1; if (done !== e.done) { e.done = done; e.ghost.setAttribute('marker-end', done ? 'url(#af-ar-on)' : 'url(#af-ar-off)'); e.ghost.classList.toggle('done', done); }
-        if (p > 0 && p < 1) dotP = e.live.getPointAtLength(e.len * k);
+        var done = p >= 1; if (done !== e.done) { e.done = done; if (e.ghost) { e.ghost.setAttribute('marker-end', done ? 'url(#af-ar-on)' : 'url(#af-ar-off)'); e.ghost.classList.toggle('done', done); } }
+        if (p > 0 && p < 1) { dotP = e.live.getPointAtLength(e.len * k); dotO = s.k === 'close'; }
         if (s.k === 'loop' && p > 0) loopSeen = true;
         if (done) reached[s.b] = true;
       });
       Object.keys(NODES).forEach(function (k) { on(k, !!reached[k]); });
       el.loop.classList.toggle('on', loopSeen);
       if (sync !== syncOn) { syncOn = sync; el.bim.g.classList.toggle('sync', sync); el.build.g.classList.toggle('sync', sync); }
-      var fin = !reduce && cyc >= T_END && cyc < T_END + T_FINAL;
-      if (fin !== finalOn) { finalOn = fin; svg.classList.toggle('is-final', fin); if (fin) STEPS.forEach(function (s, i) { if (i < 12) ping(s.b, i * 110); }); }
-      if (dotP) { dot.setAttribute('transform', 'translate(' + dotP.x.toFixed(1) + ' ' + dotP.y.toFixed(1) + ')'); dot.style.opacity = 1; } else dot.style.opacity = 0;
+      // the close: orange on the closed project, then on internal management, which blinks while the rest fades out
+      var endOn = edges[11].done, hubOn = edges[12].done;
+      if (endOn !== !!el.end.or) { el.end.or = endOn; el.end.g.classList.toggle('orange', endOn); if (endOn && !reduce) ping('end'); }
+      if (hubOn !== !!el.hub.or) { el.hub.or = hubOn; el.hub.g.classList.toggle('orange', hubOn); el.hub.g.classList.toggle('blink', hubOn && !reduce); if (hubOn && !reduce) ping('hub'); }
+      var op = {};
+      Object.keys(NODES).forEach(function (k) { op[k] = reduce ? 1 : 1 - Math.max(0, Math.min(1, (cyc - fadeAt(k)) / F_DUR)); el[k].g.style.opacity = op[k]; el[k].l.style.opacity = op[k] < 1 ? op[k] * (el[k].l.classList.contains('on') ? 1 : .38) : ''; });
+      el.loop.style.opacity = op.bim < 1 ? op.bim : '';
+      STEPS.forEach(function (s, i) { var e = edges[i]; if (!e) return; var o = Math.min(op[s.a], op[s.b]); e.live.style.opacity = o; if (e.ghost) e.ghost.style.opacity = o; });
+      if (dotP) { dot.setAttribute('transform', 'translate(' + dotP.x.toFixed(1) + ' ' + dotP.y.toFixed(1) + ')'); dot.style.opacity = 1; dot.classList.toggle('orange', dotO); } else dot.style.opacity = 0;
       var stp = Math.max(0, cur);
       if (stp !== lastStep) { lastStep = stp; capN.textContent = String(stp + 1).padStart(2, '0') + '/' + STEPS.length; capT.textContent = STEPS[stp].txt; }
     }
@@ -656,7 +679,7 @@
     build();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { mode = ''; build(); });
     if (window.ResizeObserver) new ResizeObserver(function () { build(); }).observe(fig); else window.addEventListener('resize', build);
-    if (reduce) { clock = T_END + T_FINAL; render(clock); return; }
+    if (reduce) { clock = T_END; render(clock); return; }
     if (window.IntersectionObserver) new IntersectionObserver(function (es) { var v = es[0].isIntersecting; if (v && !active) { active = true; requestAnimationFrame(frame); } else if (!v) active = false; }, { threshold: .3 }).observe(fig);
     else { active = true; requestAnimationFrame(frame); }
   })();
