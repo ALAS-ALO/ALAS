@@ -234,8 +234,8 @@
     var c = pane.querySelector('.pane-copy'), narrow = w < 900;
     var y0 = c.offsetTop + c.offsetHeight + 40, y1 = h - 72, x0, x1;
     if (narrow) { x0 = 24; x1 = w - 24; }
-    else if (side === 'studio') { x0 = c.offsetLeft; x1 = Math.max(x0 + 120, w * SPLIT / 100 - 40); }
-    else { x1 = c.offsetLeft + c.offsetWidth; x0 = Math.min(x1 - 120, w * SPLIT / 100 + 40); }
+    else if (side === 'studio') { var pr = w * SPLIT / 100, si = Math.max(40, c.offsetLeft); x0 = si; x1 = Math.max(x0 + 120, pr - si); }  // centred in its pane, starting where the text starts
+    else { var pl = w * SPLIT / 100, inset = Math.max(40, c.offsetLeft - pl); x0 = pl + inset; x1 = Math.max(x0 + 120, w - inset); }  // centred in its pane, starting where the text starts
     return { x0: x0, y0: y0, x1: x1, y1: Math.max(y0 + 120, y1), w: x1 - x0, h: Math.max(120, y1 - y0) };
   }
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
