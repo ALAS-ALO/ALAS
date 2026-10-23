@@ -190,7 +190,6 @@
  "Depende de la escala y de la tramitación. Te damos el plazo por escrito en la propuesta, y trabajar en paralelo sobre el modelo BIM nos permite acortarlo.": "Depende da escala e da tramitación. Dámosche o prazo por escrito na proposta, e traballar en paralelo sobre o modelo BIM permítenos acurtalo.",
  "Para Studio, la referencia catastral y la documentación que tengas del inmueble. Para Space, una auditoría gratuita de cómo trabaja hoy tu equipo.": "Para Studio, a referencia catastral e a documentación que teñas do inmoble. Para Space, unha auditoría gratuíta de como traballa hoxe o teu equipo.",
  "No. Partimos de cómo trabajas hoy y proponemos el paso siguiente.": "Non. Partimos de como traballas hoxe e propoñemos o seguinte paso.",
- "Nuevo encargo": "Novo encargo",
  "Gestión interna": "Xestión interna",
  "CRM y proyectos": "CRM e proxectos",
  "Gemelo digital del edificio": "Xemelgo dixital do edificio",
@@ -199,8 +198,6 @@
  "Obra sobre el gemelo|digital vivo": "Obra sobre o xemelgo|dixital vivo",
  "Proyecto cerrado": "Proxecto pechado",
  "Iteraciones con IA": "Iteracións con IA",
- "El cliente entra en la web y rellena el formulario.": "O cliente entra na web e enche o formulario.",
- "El formulario crea el proyecto en la herramienta de gestión.": "O formulario crea o proxecto na ferramenta de xestión.",
  "La gestión interna activa los agentes: informes preliminares, análisis normativo y propuestas de aproximación.": "A xestión interna activa os axentes: informes preliminares, análise normativa e propostas de aproximación.",
  "Con esos datos desarrollamos el modelo BIM, el gemelo digital del edificio.": "Con eses datos desenvolvemos o modelo BIM, o xemelgo dixital do edificio.",
  "Iteramos con IA sobre el modelo: alternativas proyectuales y propuestas visuales.": "Iteramos con IA sobre o modelo: alternativas proxectuais e propostas visuais.",
@@ -216,5 +213,9 @@
  "Estructura · MEP · Planimetría ·|Mediciones · Presupuestos ·|Memorias": "Estrutura · MEP · Planimetría ·|Medicións · Orzamentos ·|Memorias",
  "Tramitación · Gestión ·|Resolución de incidencias": "Tramitación · Xestión ·|Resolución de incidencias",
  "Entrega · Archivo": "Entrega · Arquivo",
- "Alternativas proyectuales ·|Propuestas visuales": "Alternativas proxectuais ·|Propostas visuais"
+ "Alternativas proyectuales ·|Propuestas visuales": "Alternativas proxectuais ·|Propostas visuais",
+ "Identidad visual ·|Funcionalidades ·|Mantenimiento": "Identidade visual ·|Funcionalidades ·|Mantemento",
+ "Automatizaciones ·|Integraciones API · MCP": "Automatizacións ·|Integracións API · MCP",
+ "Creamos y mantenemos la web, su identidad visual y sus funcionalidades. El cliente entra y rellena el formulario.": "Creamos e mantemos a web, a súa identidade visual e as súas funcionalidades. O cliente entra e enche o formulario.",
+ "El formulario dispara las automatizaciones: integraciones API y conectores MCP crean el proyecto en la herramienta de gestión.": "O formulario dispara as automatizacións: integracións API e conectores MCP crean o proxecto na ferramenta de xestión."
 }

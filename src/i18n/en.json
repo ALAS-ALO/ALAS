@@ -274,9 +274,7 @@
  "No. Partimos de cómo trabajas hoy y proponemos el paso siguiente.": "No. We start from how you work today and propose the next step.",
  "Modelo|BIM": "BIM|model",
  "↻ con IA": "↻ with AI",
- "Cara pública": "Public face",
  "Formulario": "Form",
- "Nuevo encargo": "New commission",
  "Gestión interna": "Internal management",
  "CRM y proyectos": "CRM and projects",
  "Gemelo digital del edificio": "Digital twin of the building",
@@ -286,8 +284,6 @@
  "Administración": "Public authorities",
  "Proyecto cerrado": "Project closed",
  "Iteraciones con IA": "AI iterations",
- "El cliente entra en la web y rellena el formulario.": "The client visits the website and fills in the form.",
- "El formulario crea el proyecto en la herramienta de gestión.": "The form creates the project in the management tool.",
  "La gestión interna activa los agentes: informes preliminares, análisis normativo y propuestas de aproximación.": "Internal management triggers the agents: preliminary reports, regulatory analysis and initial proposals.",
  "Con esos datos desarrollamos el modelo BIM, el gemelo digital del edificio.": "With that data we develop the BIM model, the building's digital twin.",
  "Iteramos con IA sobre el modelo: alternativas proyectuales y propuestas visuales.": "We iterate on the model with AI: design alternatives and visual proposals.",
@@ -303,5 +299,9 @@
  "Estructura · MEP · Planimetría ·|Mediciones · Presupuestos ·|Memorias": "Structure · MEP · Drawings ·|Quantities · Budgets ·|Reports",
  "Tramitación · Gestión ·|Resolución de incidencias": "Permits · Management ·|Issue resolution",
  "Entrega · Archivo": "Delivery · Archive",
- "Alternativas proyectuales ·|Propuestas visuales": "Design alternatives ·|Visual proposals"
+ "Alternativas proyectuales ·|Propuestas visuales": "Design alternatives ·|Visual proposals",
+ "Identidad visual ·|Funcionalidades ·|Mantenimiento": "Visual identity ·|Features ·|Maintenance",
+ "Automatizaciones ·|Integraciones API · MCP": "Automations ·|API integrations · MCP",
+ "Creamos y mantenemos la web, su identidad visual y sus funcionalidades. El cliente entra y rellena el formulario.": "We build and maintain the website, its visual identity and its features. The client visits and fills in the form.",
+ "El formulario dispara las automatizaciones: integraciones API y conectores MCP crean el proyecto en la herramienta de gestión.": "The form triggers the automations: API integrations and MCP connectors create the project in the management tool."
 }

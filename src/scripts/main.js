@@ -496,8 +496,8 @@
     };
     // title and subtitle of every node; "|" marks where a long subtitle may break
     var NODES = {
-      web: { ic: 'web', lab: 'Web', sub: 'Cara pública' },
-      form: { ic: 'form', lab: 'Formulario', sub: 'Nuevo encargo' },
+      web: { ic: 'web', lab: 'Web', sub: 'Identidad visual ·|Funcionalidades ·|Mantenimiento' },
+      form: { ic: 'form', lab: 'Formulario', sub: 'Automatizaciones ·|Integraciones API · MCP' },
       hub: { ic: 'hub', lab: 'Gestión interna', sub: 'CRM y proyectos', big: true },
       agent: { ic: 'agent', lab: 'Agentes automatizados', sub: 'Informes preliminares ·|Análisis normativo ·|Propuestas de aproximación' },
       bim: { ic: 'bim', lab: 'Modelo BIM', sub: 'Gemelo digital del edificio' },
@@ -508,8 +508,8 @@
     };
     var LOOP = { lab: 'Iteraciones con IA', sub: 'Alternativas proyectuales ·|Propuestas visuales' };
     var STEPS = [
-      { a: 'web', b: 'form', txt: 'El cliente entra en la web y rellena el formulario.' },
-      { a: 'form', b: 'hub', txt: 'El formulario crea el proyecto en la herramienta de gestión.' },
+      { a: 'web', b: 'form', txt: 'Creamos y mantenemos la web, su identidad visual y sus funcionalidades. El cliente entra y rellena el formulario.' },
+      { a: 'form', b: 'hub', txt: 'El formulario dispara las automatizaciones: integraciones API y conectores MCP crean el proyecto en la herramienta de gestión.' },
       { a: 'hub', b: 'agent', txt: 'La gestión interna activa los agentes: informes preliminares, análisis normativo y propuestas de aproximación.' },
       { a: 'agent', b: 'bim', txt: 'Con esos datos desarrollamos el modelo BIM, el gemelo digital del edificio.' },
       { a: 'bim', b: 'bim', k: 'loop', txt: 'Iteramos con IA sobre el modelo: alternativas proyectuales y propuestas visuales.' },
