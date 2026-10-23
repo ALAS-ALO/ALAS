@@ -5,7 +5,7 @@ interface Props { lang: 'es' | 'en' | 'gl'; }
 const { lang } = Astro.props;
 const m = meta[lang];
 const paths = { es: '/', en: '/en/', gl: '/gl/' };
-const site = Astro.site ?? new URL('https://alas.example');
+const site = Astro.site ?? new URL('https://alas.lopezoteroadrian.workers.dev');
 const url = (p: string) => new URL(p, site).href;
 ---
 <!doctype html>
