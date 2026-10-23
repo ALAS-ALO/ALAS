@@ -461,15 +461,22 @@
     window.addEventListener('scroll', function () { if (top.classList.contains('menu-open') && !btn.matches(':focus')) set(false); }, { passive: true });
   })();
 
-  /* ---------- Agent simulation ---------- */
-  var items = [].slice.call(document.querySelectorAll('#agent-steps li')), state = document.getElementById('agent-state'), out = document.getElementById('agent-out');
-  function paint(k) {
-    items.forEach(function (li, i) { li.className = i < k ? 'done' : i === k ? 'run' : ''; li.querySelector('.st').textContent = i < k ? '●' : i === k ? '◐' : '○'; });
-    var done = k >= items.length; state.textContent = done ? 'completado' : 'en curso';
-    out.textContent = done ? 'Informe listo · edificabilidad, altura máxima, ocupación y retranqueos de la parcela. Simulación de ejemplo.' : 'Simulación de ejemplo. Los tiempos son ilustrativos.';
-  }
-  if (!items.length) {} else if (reduce) paint(items.length);
-  else { var k = 0; paint(0); setInterval(function () { k = (k + 1) % (items.length + 3); paint(Math.min(k, items.length)); }, 1100); }
+  /* ---------- Agent simulations: steps tick, the report fills in ---------- */
+  document.querySelectorAll('[data-agent]').forEach(function (fig) {
+    var items = [].slice.call(fig.querySelectorAll('.agent-steps li')), state = fig.querySelector('.agent-state'), rows = [].slice.call(fig.querySelectorAll('[data-at]'));
+    if (!items.length) return;
+    function paint(k) {
+      items.forEach(function (li, i) { li.className = i < k ? 'done' : i === k ? 'run' : ''; li.querySelector('.st').textContent = i < k ? '●' : i === k ? '◐' : '○'; });
+      rows.forEach(function (r) { r.classList.toggle('on', k >= +r.getAttribute('data-at')); });
+      var done = k >= items.length; fig.classList.toggle('is-done', done); state.textContent = done ? 'completado' : 'en curso';
+    }
+    if (reduce) { paint(items.length); return; }
+    var k = 0, timer = 0;
+    function tick() { k = (k + 1) % (items.length + 4); paint(Math.min(k, items.length)); }
+    paint(0);
+    if (window.IntersectionObserver) new IntersectionObserver(function (es) { if (es[0].isIntersecting) { if (!timer) timer = setInterval(tick, 1100); } else { clearInterval(timer); timer = 0; } }, { threshold: .25 }).observe(fig);
+    else timer = setInterval(tick, 1100);
+  });
 
   /* ---------- Intro: full name, fade, then each S writes its branch ---------- */
   var intro = document.getElementById('intro'), timers = [], raf = 0;
@@ -1320,13 +1327,14 @@
   })();
 
   document.getElementById('tabs-logo').innerHTML = document.querySelector('.foot .logo').innerHTML;
-  /* ---------- ALAS panels: tabs, arrows, swipe ---------- */
-  (function () {
-    var track = document.getElementById('track'), tabs = [].slice.call(document.querySelectorAll('#alas [role="tab"]'));
+  /* ---------- Sliders (ALAS panels, Space tools): tabs, arrows, swipe ---------- */
+  function slider(root, full) {
+    var track = root.querySelector('.track'), tabs = [].slice.call(root.querySelectorAll('[role="tab"]'));
     var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
-    var prev = document.getElementById('tab-prev'), next = document.getElementById('tab-next'), cur = 0, queued = false;
+    var prev = root.querySelector('.tab-prev, #tab-prev'), next = root.querySelector('.tab-next, #tab-next'), cur = 0, queued = false;
+    if (panels.length < 2) root.classList.add('is-single');
     panels.forEach(function (p) { p.hidden = false; });
-    function fit() { if (!document.getElementById('alas').contains(track)) track.style.height = panels[cur].offsetHeight + 'px'; }
+    function fit() { if (!full) track.style.height = panels[cur].offsetHeight + 'px'; }
     function mark(i) {
       cur = i;
       tabs.forEach(function (t, j) { t.setAttribute('aria-selected', String(j === i)); t.tabIndex = j === i ? 0 : -1; });
@@ -1358,7 +1366,9 @@
     window.addEventListener('resize', function () { track.scrollLeft = cur * track.clientWidth; fit(); });
     if (window.ResizeObserver) { var ro = new ResizeObserver(fit); panels.forEach(function (p) { ro.observe(p); }); }
     mark(0);
-  })();
+  }
+  slider(document.getElementById('alas'), true);
+  document.querySelectorAll('.cases').forEach(function (c) { slider(c, false); });
 
   // a call to action opens the form with its branch already chosen
   document.querySelectorAll('.cta[data-rama]').forEach(function (a) { a.addEventListener('click', function () { var r = document.getElementById('r-' + a.getAttribute('data-rama')); if (r) r.checked = true; }); });
