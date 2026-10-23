@@ -490,90 +490,114 @@
       agent: 'M8 8h8v8H8zM10.5 10.5h3v3h-3zM10 8V5M14 8V5M10 19v-3M14 19v-3M8 10H5M8 14H5M19 10h-3M19 14h-3',
       bim: 'M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9',
       docs: 'M8 3h8l4 4v11H8zM16 3v4h4M5 7v14h11M11 11h6M11 14h6',
-      report: 'M6 3h12v18H6zM9 17v-3M12 17v-6M15 17v-4M9 7h6',
+      build: 'M3 21h10M7 21V4M3 7l4-3 13 3zM17 7v4.5M15.5 11.5h3v3h-3z',
       gov: 'M3 9l9-5 9 5zM5.5 10.5v7M9.5 10.5v7M14.5 10.5v7M18.5 10.5v7M3 20h18',
       done: 'M5.5 12.5l4.5 4.5 8.5-9'
     };
+    // title and subtitle of every node; "|" marks where a long subtitle may break
     var NODES = {
-      web: { ic: 'web', lab: ['Web'], sub: 'Cara pública' },
-      form: { ic: 'form', lab: ['Formulario'], sub: 'Nuevo encargo' },
-      hub: { ic: 'hub', lab: ['Gestión interna'], sub: 'CRM y proyectos', big: true },
-      agent: { ic: 'agent', lab: ['Agentes', 'automatizados'] },
-      bim: { ic: 'bim', lab: ['Modelo BIM'] },
-      docs: { ic: 'docs', lab: ['Documentos'], sub: 'Planos · mediciones · presupuesto' },
-      rep: { ic: 'report', lab: ['Informe'] },
-      gov: { ic: 'gov', lab: ['Administración'], sub: 'Tramitación' },
-      end: { ic: 'done', lab: ['Proyecto cerrado'], end: true }
+      web: { ic: 'web', lab: 'Web', sub: 'Cara pública' },
+      form: { ic: 'form', lab: 'Formulario', sub: 'Nuevo encargo' },
+      hub: { ic: 'hub', lab: 'Gestión interna', sub: 'CRM y proyectos', big: true },
+      agent: { ic: 'agent', lab: 'Agentes automatizados', sub: 'Informes preliminares ·|análisis normativo ·|propuestas de aproximación' },
+      bim: { ic: 'bim', lab: 'Modelo BIM', sub: 'Gemelo digital del edificio' },
+      docs: { ic: 'docs', lab: 'Documentación y sistemas', sub: 'Estructura · MEP · planimetría ·|mediciones · presupuestos ·|memorias' },
+      build: { ic: 'build', lab: 'Construcción', sub: 'Obra sobre el gemelo|digital vivo' },
+      gov: { ic: 'gov', lab: 'Administración', sub: 'Tramitación · gestión ·|incidencias' },
+      end: { ic: 'done', lab: 'Proyecto cerrado', sub: 'Entrega y archivo', end: true }
     };
+    var LOOP = { lab: 'Iteraciones con IA', sub: 'Alternativas proyectuales ·|propuestas visuales' };
     var STEPS = [
-      ['web', 'form', 'El cliente entra en la web y rellena el formulario.'],
-      ['form', 'hub', 'El formulario crea el proyecto en la herramienta de gestión.'],
-      ['hub', 'agent', 'La gestión interna activa los agentes automatizados.'],
-      ['agent', 'bim', 'Los agentes preparan el modelo BIM con los datos del encargo.'],
-      ['bim', 'bim', 'Iteramos el modelo con IA para comparar propuestas.'],
-      ['bim', 'docs', 'Del modelo salen planos, mediciones y presupuesto.'],
-      ['docs', 'hub', 'Los documentos vuelven a la gestión interna y el equipo los revisa.'],
-      ['hub', 'rep', 'La gestión interna genera el informe del proyecto.'],
-      ['rep', 'gov', 'El informe se presenta ante la Administración para tramitarlo.'],
-      ['gov', 'hub', 'La respuesta de la Administración vuelve a la gestión interna.'],
-      ['hub', 'end', 'Proyecto cerrado: cada paso queda registrado.']
+      { a: 'web', b: 'form', txt: 'El cliente entra en la web y rellena el formulario.' },
+      { a: 'form', b: 'hub', txt: 'El formulario crea el proyecto en la herramienta de gestión.' },
+      { a: 'hub', b: 'agent', txt: 'La gestión interna activa los agentes: informes preliminares, análisis normativo y propuestas de aproximación.' },
+      { a: 'agent', b: 'bim', txt: 'Con esos datos desarrollamos el modelo BIM, el gemelo digital del edificio.' },
+      { a: 'bim', b: 'bim', k: 'loop', txt: 'Iteramos con IA sobre el modelo: alternativas proyectuales y propuestas visuales.' },
+      { a: 'bim', b: 'docs', txt: 'Del modelo salen la documentación y los sistemas: estructura, MEP, planos, mediciones, presupuestos y memorias.' },
+      { a: 'docs', b: 'hub', txt: 'Todo vuelve a la gestión interna y el equipo lo revisa.' },
+      { a: 'hub', b: 'build', txt: 'Empieza la construcción del modelo diseñado.' },
+      { a: 'build', b: 'bim', k: 'sync', txt: 'Obra y gemelo digital avanzan juntos: el modelo sigue vivo y genera alternativas durante la obra.' },
+      { a: 'build', b: 'gov', txt: 'Ante la Administración tramitamos, gestionamos y resolvemos incidencias.' },
+      { a: 'gov', b: 'hub', txt: 'La respuesta vuelve a la gestión interna.' },
+      { a: 'hub', b: 'end', bend: -.1, txt: 'El proyecto se entrega y se cierra.' },
+      { a: 'end', b: 'hub', bend: -.1, k: 'close', txt: 'El cierre vuelve a la gestión interna: el ciclo se completa y queda listo para el siguiente encargo.' }
     ];
-    var LOOPS = [['hub', 'agent', 'bim', 'docs'], ['hub', 'rep', 'gov']], LOOPLAB = '↻ Iteraciones|con IA';
+    var LOOPS = [['hub', 'agent', 'bim', 'docs'], ['hub', 'build', 'gov']];
     var LAY = {
-      wide: { w: 1200, h: 590, r: 30, R: 44, fs: 15, ss: 12, lh: 18, bend: .2, ring: 13,
-        p: { web: [80, 305], form: [255, 305], hub: [600, 305], agent: [420, 135], bim: [600, 92], docs: [780, 135], rep: [780, 478], gov: [420, 478], end: [1115, 305] },
-        l: { web: 'b', form: 'b', hub: 'b', agent: 'l', bim: 'b', docs: 'r', rep: 'r', gov: 'l', end: 'b' } },
-      narrow: { w: 360, h: 790, r: 23, R: 33, fs: 12.5, ss: 10.5, lh: 15, bend: .2, ring: 10,
-        p: { web: [180, 40], form: [180, 140], hub: [180, 405], agent: [78, 270], bim: [52, 405], docs: [78, 540], rep: [292, 290], gov: [292, 525], end: [180, 760] },
-        l: { web: 'r', form: 'r', hub: 'r', agent: 't', bim: 'r', docs: 'b', rep: 't', gov: 'b', end: 'r' } }
+      wide: { w: 1200, h: 650, r: 30, R: 44, fs: 15, ss: 12, lh: 17, bend: .16, lr: 13, side: 'top', sub: 3,
+        p: { web: [80, 345], form: [255, 345], hub: [600, 345], agent: [420, 175], bim: [600, 132], docs: [780, 175], build: [780, 518], gov: [420, 518], end: [1115, 345] },
+        l: { web: 'b', form: 'b', hub: 'b', agent: 'l', bim: 'b', docs: 'r', build: 'r', gov: 'l', end: 'b' } },
+      narrow: { w: 360, h: 1010, r: 22, R: 30, fs: 12.5, ss: 10.5, lh: 14, bend: -.16, hubBend: .05, lr: 10, side: 'left', sub: 4,
+        p: { web: [40, 36], form: [40, 130], hub: [64, 520], agent: [150, 250], bim: [150, 385], docs: [150, 520], build: [150, 680], gov: [150, 815], end: [64, 960] },
+        l: { web: 'r', form: 'r', hub: 'b', agent: 'r', bim: 'r', docs: 'r', build: 'r', gov: 'r', end: 'r' } }
     };
-    var T_EDGE = 1050, T_LOOP = 1700, T_DWELL = 520, T_HOLD = 3800, T_FADE = 700;
+    var T_EDGE = 1050, T_LOOP = 1700, T_SYNC = 2600, T_DWELL = 520, T_FINAL = 2200, T_HOLD = 3600, T_FADE = 700;
     var starts = [], tt = 400;
-    STEPS.forEach(function (s) { starts.push(tt); tt += (s[0] === s[1] ? T_LOOP : T_EDGE) + T_DWELL; });
-    var T_END = tt, T_CYCLE = T_END + T_HOLD + T_FADE;
-    var L, mode = '', svg, el = {}, edges = [], dot, glow, shown = {}, lastStep = -2, active = false, clock = 0, last = null;
+    function dur(s) { return s.k === 'loop' ? T_LOOP : s.k === 'sync' ? T_SYNC : T_EDGE; }
+    STEPS.forEach(function (s) { starts.push(tt); tt += dur(s) + T_DWELL; });
+    var T_END = tt, T_CYCLE = T_END + T_FINAL + T_HOLD + T_FADE;
+    var L, mode = '', svg, el = {}, edges = [], dot, shown = {}, lastStep = -2, finalOn = false, syncOn = false, active = false, clock = 0, last = null;
 
     function mk(tag, at, parent) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (parent) parent.appendChild(e); return e; }
     function rad(k) { return NODES[k].big ? L.R : L.r; }
     function centroid(ks) { var x = 0, y = 0; ks.forEach(function (k) { x += L.p[k][0]; y += L.p[k][1]; }); return [x / ks.length, y / ks.length]; }
-    function edgePath(a, b) {
-      var A = L.p[a], B = L.p[b], mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy), c = [mx, my];
-      var loop = LOOPS.filter(function (g) { return g.indexOf(a) > -1 && g.indexOf(b) > -1; })[0];
-      if (loop) { var o = centroid(loop), nx = -dy / len, ny = dx / len; if (nx * (mx - o[0]) + ny * (my - o[1]) < 0) { nx = -nx; ny = -ny; } c = [mx + nx * len * L.bend, my + ny * len * L.bend]; }
-      function trim(P, Q, d) { var vx = Q[0] - P[0], vy = Q[1] - P[1], l = Math.hypot(vx, vy); return [P[0] + vx / l * d, P[1] + vy / l * d]; }
-      var s = trim(A, c, rad(a) + 5), e = trim(B, c, rad(b) + 9);
-      return 'M' + s[0].toFixed(1) + ' ' + s[1].toFixed(1) + 'Q' + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1);
+    function loopCentre() { var P = L.p.bim, d = rad('bim') + L.lr + 3; return L.side === 'top' ? [P[0], P[1] - d] : [P[0] - d, P[1]]; }
+    function edgePath(s) {
+      var A = L.p[s.a], B = L.p[s.b], mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len, c = [mx, my];
+      var loop = LOOPS.filter(function (g) { return g.indexOf(s.a) > -1 && g.indexOf(s.b) > -1; })[0];
+      if (s.bend) c = [mx + nx * len * s.bend, my + ny * len * s.bend];
+      else if (loop) { var o = centroid(loop), bd = s.a === 'hub' || s.b === 'hub' ? (L.hubBend || Math.abs(L.bend)) : L.bend; if (nx * (mx - o[0]) + ny * (my - o[1]) < 0) { nx = -nx; ny = -ny; } c = [mx + nx * len * bd, my + ny * len * bd]; }
+      function trim(P, Q, d) { var vx = Q[0] - P[0], vy = Q[1] - P[1], l = Math.hypot(vx, vy) || 1; return [P[0] + vx / l * d, P[1] + vy / l * d]; }
+      var st = trim(A, c, rad(s.a) + 5), e = trim(B, c, rad(s.b) + 9);
+      return 'M' + st[0].toFixed(1) + ' ' + st[1].toFixed(1) + 'Q' + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1);
     }
-    function loopPath(k) { var P = L.p[k], q = rad(k) + L.ring, a0 = -Math.PI / 2 + .35, a1 = -Math.PI / 2 - .35 + 2 * Math.PI;
-      return 'M' + (P[0] + q * Math.cos(a0)).toFixed(1) + ' ' + (P[1] + q * Math.sin(a0)).toFixed(1) + 'A' + q + ' ' + q + ' 0 1 1 ' + (P[0] + q * Math.cos(a1)).toFixed(1) + ' ' + (P[1] + q * Math.sin(a1)).toFixed(1); }
-    function labels(k, g) {
-      var n = NODES[k], P = L.p[k], r = rad(k) + (k === 'bim' ? L.ring : 0), pos = L.l[k], lines = n.lab.map(function (t) { return [t, 'af-lab', L.fs]; });
-      var sub = n.sub && mode === 'narrow' ? n.sub.replace(/ · (?=[^·]*$)/, '|') : n.sub;
-      if (sub) sub.split('|').forEach(function (t) { lines.push([t, 'af-sub', L.ss]); });
-      if (k === 'bim' && mode === 'narrow') { lines = 'Modelo|BIM'.split('|').map(function (t) { return [t, 'af-lab', L.fs]; }); lines.push(['↻ con IA', 'af-sub af-loopsub', L.ss]); r = rad(k) + L.ring - 6; }
-      var tot = (lines.length - 1) * L.lh, x = P[0], y, anc = 'middle';
-      if (pos === 'b') y = P[1] + r + L.fs + 6;
-      else if (pos === 't') y = P[1] - r - 10 - tot;
-      else { x = P[0] + (pos === 'l' ? -1 : 1) * (r + 14); anc = pos === 'l' ? 'end' : 'start'; y = P[1] - tot / 2 + L.fs * .35; }
-      lines.forEach(function (ln, i) { mk('text', { x: x, y: (y + i * L.lh).toFixed(1), 'text-anchor': anc, 'class': ln[1], style: 'font-size:' + ln[2] + 'px' }, g).textContent = ln[0]; });
+    // the AI loop: a small circle beside the model, outside its incoming and outgoing arrows
+    function loopPath() {
+      var C = loopCentre(), q = L.lr, back = L.side === 'top' ? Math.PI / 2 : 0, a0 = back + .55, a1 = back - .55 + 2 * Math.PI;
+      return 'M' + (C[0] + q * Math.cos(a0)).toFixed(1) + ' ' + (C[1] + q * Math.sin(a0)).toFixed(1) + 'A' + q + ' ' + q + ' 0 1 1 ' + (C[0] + q * Math.cos(a1)).toFixed(1) + ' ' + (C[1] + q * Math.sin(a1)).toFixed(1);
+    }
+    function subLines(txt) {
+      var parts = txt.split('|').map(function (t) { return t.trim(); });
+      if (mode === 'wide') return parts.join(' ').length < 34 ? [parts.join(' ')] : parts;
+      // on a phone: rewrap to the width beside the nodes
+      var out = [], line = '';
+      parts.join(' ').split(' ').reduce(function (a, w) { if (w === '·' && a.length) a[a.length - 1] += ' ·'; else a.push(w); return a; }, []).forEach(function (w) { if (line && (line + ' ' + w).length > 25) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+      if (line) out.push(line); return out;
+    }
+    function titleLines(txt) { return mode === 'narrow' && txt.length > (txt === NODES.hub.lab ? 10 : 19) && txt.indexOf(' ') > 0 ? [txt.slice(0, txt.lastIndexOf(' ', 16) > 0 ? txt.lastIndexOf(' ', 16) : txt.indexOf(' ')), txt.slice((txt.lastIndexOf(' ', 16) > 0 ? txt.lastIndexOf(' ', 16) : txt.indexOf(' ')) + 1)] : [txt]; }
+    // a text block with a backing in the page colour, so lines that pass behind it never cut through the words
+    function block(g, x, y, anc, lines, cls) {
+      var tg = mk('g', {}, g), bg = mk('rect', { 'class': 'af-mask', rx: 4 }, tg);
+      lines.forEach(function (ln, i) { mk('text', { x: x, y: (y + i * L.lh).toFixed(1), 'text-anchor': anc, 'class': ln[1] + (cls ? ' ' + cls : ''), style: 'font-size:' + ln[2] + 'px' }, tg).textContent = ln[0]; });
+      try { var b = tg.getBBox(); bg.setAttribute('x', (b.x - 4).toFixed(1)); bg.setAttribute('y', (b.y - 2).toFixed(1)); bg.setAttribute('width', (b.width + 8).toFixed(1)); bg.setAttribute('height', (b.height + 4).toFixed(1)); } catch (err) {}
+    }
+    function place(P, r, pos, n) {
+      var tot = (n - 1) * L.lh;
+      if (pos === 'b') return [P[0], P[1] + r + L.fs + 6, 'middle'];
+      if (pos === 't') return [P[0], P[1] - r - 10 - tot, 'middle'];
+      return [P[0] + (pos === 'l' ? -1 : 1) * (r + 14), P[1] - tot / 2 + L.fs * .35, pos === 'l' ? 'end' : 'start'];
+    }
+    function linesOf(lab, sub, cls) { var lines = titleLines(lab).map(function (t) { return [t, cls || 'af-lab', L.fs]; }); subLines(sub).forEach(function (t) { lines.push([t, 'af-sub', L.ss]); }); return lines; }
+    function nodeLabel(k, g) {
+      var lines = linesOf(NODES[k].lab, NODES[k].sub), extra = k === 'bim' && L.side === 'left' ? linesOf(LOOP.lab, LOOP.sub).length : 0;
+      var q = place(L.p[k], rad(k), L.l[k], lines.length + extra); block(g, q[0], q[1], q[2], lines);
+      if (extra) el.loopAt = [q[0], q[1] + lines.length * L.lh + 4, q[2]];
     }
     function build() {
       var nm = fig.clientWidth >= 700 ? 'wide' : 'narrow'; if (nm === mode) return; mode = nm; L = LAY[nm];
-      host.innerHTML = ''; el = {}; edges = []; shown = {}; lastStep = -2;
+      host.innerHTML = ''; el = {}; edges = []; shown = {}; lastStep = -2; finalOn = syncOn = false;
       svg = mk('svg', { viewBox: '0 0 ' + L.w + ' ' + L.h, 'aria-hidden': 'true' }, host);
       var defs = mk('defs', {}, svg);
       ['off', 'on'].forEach(function (m) { var mr = mk('marker', { id: 'af-ar-' + m, viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs); mk('path', { d: 'M0 0L10 5L0 10z', 'class': 'af-ar-' + m }, mr); });
-      var gE = mk('g', {}, svg), gN = mk('g', {}, svg), gL = mk('g', {}, svg);
-      STEPS.forEach(function (s, i) {
-        var d = s[0] === s[1] ? loopPath(s[0]) : edgePath(s[0], s[1]);
+      var gE = mk('g', {}, svg), gL = mk('g', {}, svg), gN = mk('g', {}, svg);
+      STEPS.forEach(function (s) {
+        if (s.k === 'sync') { edges.push(null); return; }
+        var d = s.k === 'loop' ? loopPath() : edgePath(s);
         var ghost = mk('path', { d: d, 'class': 'af-ghost', 'marker-end': 'url(#af-ar-off)' }, gE);
         var live = mk('path', { d: d, 'class': 'af-live' }, gE), len = live.getTotalLength();
         live.style.strokeDasharray = len + ' ' + len; live.style.strokeDashoffset = len;
         edges.push({ ghost: ghost, live: live, len: len, done: false });
       });
-      var bim = L.p.bim, q = rad('bim') + L.ring;
-      el.loopLab = mk('text', { x: bim[0], y: bim[1] - q - 9, 'text-anchor': 'middle', 'class': 'af-sub af-loop', style: 'font-size:' + L.ss + 'px' + (mode === 'narrow' ? ';display:none' : '') }, gL);
-      el.loopLab.textContent = LOOPLAB.replace('|', ' ');
       Object.keys(NODES).forEach(function (k) {
         var P = L.p[k], r = rad(k), s = r / 19;
         var g = mk('g', { transform: 'translate(' + P[0] + ' ' + P[1] + ')', 'class': 'af-node' + (NODES[k].end ? ' af-end' : '') + (NODES[k].big ? ' af-hub' : '') }, gN);
@@ -581,37 +605,48 @@
         mk('circle', { r: r + 8, 'class': 'af-ping' }, pop);
         mk('circle', { r: r, 'class': 'af-c' }, pop);
         mk('path', { d: ICON[NODES[k].ic], transform: 'translate(' + (-12 * s) + ' ' + (-12 * s) + ') scale(' + s + ')', 'class': 'af-ic' }, pop);
-        var lg = mk('g', { 'class': 'af-l' }, gL); labels(k, lg);
+        var lg = mk('g', { 'class': 'af-l' }, gL); nodeLabel(k, lg);
         el[k] = { g: g, l: lg };
       });
+      // the loop's own title and subtitle
+      var C = loopCentre(), ll = linesOf(LOOP.lab, LOOP.sub, 'af-lab af-acc');
+      el.loop = mk('g', { 'class': 'af-l' }, gL);
+      if (L.side === 'top') block(el.loop, C[0], C[1] - L.lr - 10 - (ll.length - 1) * L.lh, 'middle', ll);
+      else block(el.loop, el.loopAt[0], el.loopAt[1], el.loopAt[2], ll);
       dot = mk('g', { 'class': 'af-dot', style: 'opacity:0' }, svg);
-      glow = mk('circle', { r: 11, 'class': 'af-glow' }, dot); mk('circle', { r: 4.5, 'class': 'af-core' }, dot);
+      mk('circle', { r: 11, 'class': 'af-glow' }, dot); mk('circle', { r: 4.5, 'class': 'af-core' }, dot);
       render(clock);
     }
+    function ping(k, delay) { var p = el[k].g.querySelector('.af-ping'); p.style.animationDelay = (delay || 0) + 'ms'; p.classList.remove('go'); void p.getBBox(); p.classList.add('go'); }
     function on(k, v) {
       if (!!shown[k] === v) return; shown[k] = v;
       el[k].g.classList.toggle('on', v); el[k].l.classList.toggle('on', v);
-      if (v && !reduce) { var p = el[k].g.querySelector('.af-ping'); p.classList.remove('go'); void p.getBBox(); p.classList.add('go'); }
+      if (v && !reduce) ping(k);
     }
     function ease(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
     function render(t) {
       if (!svg) return;
-      var cyc = reduce ? T_END : t % T_CYCLE, fade = cyc > T_END + T_HOLD ? 1 - (cyc - T_END - T_HOLD) / T_FADE : 1;
+      var cyc = reduce ? T_END + T_FINAL : t % T_CYCLE, fade = cyc > T_END + T_FINAL + T_HOLD ? 1 - (cyc - T_END - T_FINAL - T_HOLD) / T_FADE : 1;
       svg.style.opacity = Math.max(0, fade).toFixed(3);
-      var reached = { web: true }, cur = -1, dotP = null;
+      var reached = { web: true }, cur = -1, dotP = null, sync = false, loopSeen = false;
       STEPS.forEach(function (s, i) {
-        var e = edges[i], T = s[0] === s[1] ? T_LOOP : T_EDGE, p = Math.max(0, Math.min(1, (cyc - starts[i]) / T));
+        var p = Math.max(0, Math.min(1, (cyc - starts[i]) / dur(s)));
         if (cyc >= starts[i]) cur = i;
-        var k = ease(p); e.live.style.strokeDashoffset = (e.len * (1 - k)).toFixed(1);
+        if (s.k === 'sync') { if (p > 0 && p < 1) sync = true; return; }
+        var e = edges[i], k = ease(p); e.live.style.strokeDashoffset = (e.len * (1 - k)).toFixed(1);
         var done = p >= 1; if (done !== e.done) { e.done = done; e.ghost.setAttribute('marker-end', done ? 'url(#af-ar-on)' : 'url(#af-ar-off)'); e.ghost.classList.toggle('done', done); }
         if (p > 0 && p < 1) dotP = e.live.getPointAtLength(e.len * k);
-        if (done) reached[s[1]] = true;
+        if (s.k === 'loop' && p > 0) loopSeen = true;
+        if (done) reached[s.b] = true;
       });
       Object.keys(NODES).forEach(function (k) { on(k, !!reached[k]); });
-      el.loopLab.classList.toggle('on', edges[4].done || cyc >= starts[4]);
+      el.loop.classList.toggle('on', loopSeen);
+      if (sync !== syncOn) { syncOn = sync; el.bim.g.classList.toggle('sync', sync); el.build.g.classList.toggle('sync', sync); }
+      var fin = !reduce && cyc >= T_END && cyc < T_END + T_FINAL;
+      if (fin !== finalOn) { finalOn = fin; svg.classList.toggle('is-final', fin); if (fin) STEPS.forEach(function (s, i) { if (i < 12) ping(s.b, i * 110); }); }
       if (dotP) { dot.setAttribute('transform', 'translate(' + dotP.x.toFixed(1) + ' ' + dotP.y.toFixed(1) + ')'); dot.style.opacity = 1; } else dot.style.opacity = 0;
       var stp = Math.max(0, cur);
-      if (stp !== lastStep) { lastStep = stp; capN.textContent = String(stp + 1).padStart(2, '0') + '/' + STEPS.length; capT.textContent = STEPS[stp][2]; }
+      if (stp !== lastStep) { lastStep = stp; capN.textContent = String(stp + 1).padStart(2, '0') + '/' + STEPS.length; capT.textContent = STEPS[stp].txt; }
     }
     function frame(now) {
       if (!active) { last = null; return; }
@@ -619,8 +654,9 @@
       render(clock); requestAnimationFrame(frame);
     }
     build();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { mode = ''; build(); });
     if (window.ResizeObserver) new ResizeObserver(function () { build(); }).observe(fig); else window.addEventListener('resize', build);
-    if (reduce) { clock = T_END; render(clock); return; }
+    if (reduce) { clock = T_END + T_FINAL; render(clock); return; }
     if (window.IntersectionObserver) new IntersectionObserver(function (es) { var v = es[0].isIntersecting; if (v && !active) { active = true; requestAnimationFrame(frame); } else if (!v) active = false; }, { threshold: .3 }).observe(fig);
     else { active = true; requestAnimationFrame(frame); }
   })();

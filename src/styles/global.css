@@ -597,7 +597,13 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .af-l.on, .af-loop.on { opacity: 1; }
 .af-lab { fill: var(--ink); font-family: var(--font-sans); font-weight: 500; }
 .af-sub { fill: var(--muted); font-family: var(--font-mono); letter-spacing: .02em; }
-.af-loop, .af-loopsub { fill: var(--accent-text); }
+.af-acc { fill: var(--accent-text); }
+.af-mask { fill: var(--ground); }
+.af-node.sync .af-c { animation: af-sync .55s ease-in-out infinite alternate; }
+.af-node.sync .af-ic { stroke: var(--ink); }
+@keyframes af-sync { 0%, 15% { fill: var(--surface); stroke: var(--accent); } 85%, 100% { fill: var(--studio-orange); stroke: var(--studio-orange); } }
+.is-final .af-live { animation: af-glow 1.1s ease-in-out 2 alternate; }
+@keyframes af-glow { to { stroke-width: 3.2; } }
 .af-core { fill: var(--accent); }
 .af-glow { fill: var(--accent); opacity: .22; }
 @media (max-width: 899px) { .autoflow-cap { font-size: 14px; line-height: 21px; } }
