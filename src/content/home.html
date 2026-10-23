@@ -127,7 +127,8 @@
           <h3 class="h2">Así trabajan nuestras herramientas.</h3>
         </div>
         <div class="tabs" role="tablist" aria-label="Herramientas de Space">
-          <button type="button" role="tab" id="ct-normativa" aria-controls="cp-normativa" aria-selected="true"><span>01</span>Control normativo</button>
+          <button type="button" role="tab" id="ct-auto" aria-controls="cp-auto" aria-selected="true"><span>01</span>Automatización</button>
+          <button type="button" role="tab" id="ct-normativa" aria-controls="cp-normativa" aria-selected="false" tabindex="-1"><span>02</span>Control normativo</button>
         </div>
         <div class="tab-arrows">
           <button type="button" class="tab-prev" aria-label="Herramienta anterior">←</button>
@@ -135,6 +136,23 @@
         </div>
       </div>
       <div class="track">
+        <section class="panel" role="tabpanel" id="cp-auto" aria-labelledby="ct-auto">
+          <div class="tool">
+            <div class="tool-copy">
+              <div class="tool-text"><h4 class="h3">Tu estudio, automatizado de principio a fin</h4>
+              <p>Conectamos la web, la gestión interna, los agentes y el modelo BIM en un solo flujo. Cada encargo entra por el formulario y pasa solo de una herramienta a la siguiente, mientras el equipo supervisa cada paso: revisa, decide y firma.</p></div>
+              <dl class="tool-io">
+                <div><dt>Entrada</dt><dd>Formulario de la web</dd></div>
+                <div><dt>Salida</dt><dd>Proyecto tramitado y cerrado</dd></div>
+                <div><dt>Revisión</dt><dd>El equipo valida cada documento</dd></div>
+              </dl>
+            </div>
+            <figure class="autoflow-fig" role="img" aria-label="Flujo de un encargo automatizado: el cliente rellena el formulario de la web, que crea el proyecto en la gestión interna. La gestión interna activa los agentes automatizados, que preparan el modelo BIM; el modelo se itera con IA y de él salen planos, mediciones y presupuesto, que vuelven a la gestión interna para su revisión. Después se genera el informe, se tramita ante la Administración, la respuesta vuelve a la gestión interna y el proyecto se cierra.">
+              <div class="autoflow" id="autoflow"></div>
+              <figcaption class="autoflow-cap" aria-hidden="true"><span class="n">01/11</span><span class="t"></span></figcaption>
+            </figure>
+          </div>
+        </section>
         <section class="panel" role="tabpanel" id="cp-normativa" aria-labelledby="ct-normativa">
           <div class="tool">
             <div class="tool-copy">

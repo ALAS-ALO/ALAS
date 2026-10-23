@@ -478,6 +478,153 @@
     else timer = setInterval(tick, 1100);
   });
 
+  /* ---------- Space: an automated commission, from the web form to the closed project ---------- */
+  (function () {
+    var host = document.getElementById('autoflow'); if (!host) return;
+    var fig = host.parentNode, capN = fig.querySelector('.autoflow-cap .n'), capT = fig.querySelector('.autoflow-cap .t');
+    var NS = 'http://www.w3.org/2000/svg';
+    var ICON = {
+      web: 'M3 6.5C3 5.7 3.7 5 4.5 5h15c.8 0 1.5.7 1.5 1.5v11c0 .8-.7 1.5-1.5 1.5h-15c-.8 0-1.5-.7-1.5-1.5zM3 9h18M6 7h.01M8.5 7h.01M7 13h6M7 15.5h4',
+      form: 'M6 3h12v18H6zM9 7.5h6M9 11h6M9 14.5h6M9 18h3',
+      hub: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+      agent: 'M8 8h8v8H8zM10.5 10.5h3v3h-3zM10 8V5M14 8V5M10 19v-3M14 19v-3M8 10H5M8 14H5M19 10h-3M19 14h-3',
+      bim: 'M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9',
+      docs: 'M8 3h8l4 4v11H8zM16 3v4h4M5 7v14h11M11 11h6M11 14h6',
+      report: 'M6 3h12v18H6zM9 17v-3M12 17v-6M15 17v-4M9 7h6',
+      gov: 'M3 9l9-5 9 5zM5.5 10.5v7M9.5 10.5v7M14.5 10.5v7M18.5 10.5v7M3 20h18',
+      done: 'M5.5 12.5l4.5 4.5 8.5-9'
+    };
+    var NODES = {
+      web: { ic: 'web', lab: ['Web'], sub: 'Cara pública' },
+      form: { ic: 'form', lab: ['Formulario'], sub: 'Nuevo encargo' },
+      hub: { ic: 'hub', lab: ['Gestión interna'], sub: 'CRM y proyectos', big: true },
+      agent: { ic: 'agent', lab: ['Agentes', 'automatizados'] },
+      bim: { ic: 'bim', lab: ['Modelo BIM'] },
+      docs: { ic: 'docs', lab: ['Documentos'], sub: 'Planos · mediciones · presupuesto' },
+      rep: { ic: 'report', lab: ['Informe'] },
+      gov: { ic: 'gov', lab: ['Administración'], sub: 'Tramitación' },
+      end: { ic: 'done', lab: ['Proyecto cerrado'], end: true }
+    };
+    var STEPS = [
+      ['web', 'form', 'El cliente entra en la web y rellena el formulario.'],
+      ['form', 'hub', 'El formulario crea el proyecto en la herramienta de gestión.'],
+      ['hub', 'agent', 'La gestión interna activa los agentes automatizados.'],
+      ['agent', 'bim', 'Los agentes preparan el modelo BIM con los datos del encargo.'],
+      ['bim', 'bim', 'Iteramos el modelo con IA para comparar propuestas.'],
+      ['bim', 'docs', 'Del modelo salen planos, mediciones y presupuesto.'],
+      ['docs', 'hub', 'Los documentos vuelven a la gestión interna y el equipo los revisa.'],
+      ['hub', 'rep', 'La gestión interna genera el informe del proyecto.'],
+      ['rep', 'gov', 'El informe se presenta ante la Administración para tramitarlo.'],
+      ['gov', 'hub', 'La respuesta de la Administración vuelve a la gestión interna.'],
+      ['hub', 'end', 'Proyecto cerrado: cada paso queda registrado.']
+    ];
+    var LOOPS = [['hub', 'agent', 'bim', 'docs'], ['hub', 'rep', 'gov']], LOOPLAB = '↻ Iteraciones|con IA';
+    var LAY = {
+      wide: { w: 1200, h: 590, r: 30, R: 44, fs: 15, ss: 12, lh: 18, bend: .2, ring: 13,
+        p: { web: [80, 305], form: [255, 305], hub: [600, 305], agent: [420, 135], bim: [600, 92], docs: [780, 135], rep: [780, 478], gov: [420, 478], end: [1115, 305] },
+        l: { web: 'b', form: 'b', hub: 'b', agent: 'l', bim: 'b', docs: 'r', rep: 'r', gov: 'l', end: 'b' } },
+      narrow: { w: 360, h: 790, r: 23, R: 33, fs: 12.5, ss: 10.5, lh: 15, bend: .2, ring: 10,
+        p: { web: [180, 40], form: [180, 140], hub: [180, 405], agent: [78, 270], bim: [52, 405], docs: [78, 540], rep: [292, 290], gov: [292, 525], end: [180, 760] },
+        l: { web: 'r', form: 'r', hub: 'r', agent: 't', bim: 'r', docs: 'b', rep: 't', gov: 'b', end: 'r' } }
+    };
+    var T_EDGE = 1050, T_LOOP = 1700, T_DWELL = 520, T_HOLD = 3800, T_FADE = 700;
+    var starts = [], tt = 400;
+    STEPS.forEach(function (s) { starts.push(tt); tt += (s[0] === s[1] ? T_LOOP : T_EDGE) + T_DWELL; });
+    var T_END = tt, T_CYCLE = T_END + T_HOLD + T_FADE;
+    var L, mode = '', svg, el = {}, edges = [], dot, glow, shown = {}, lastStep = -2, active = false, clock = 0, last = null;
+
+    function mk(tag, at, parent) { var e = document.createElementNS(NS, tag); for (var k in at) e.setAttribute(k, at[k]); if (parent) parent.appendChild(e); return e; }
+    function rad(k) { return NODES[k].big ? L.R : L.r; }
+    function centroid(ks) { var x = 0, y = 0; ks.forEach(function (k) { x += L.p[k][0]; y += L.p[k][1]; }); return [x / ks.length, y / ks.length]; }
+    function edgePath(a, b) {
+      var A = L.p[a], B = L.p[b], mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy), c = [mx, my];
+      var loop = LOOPS.filter(function (g) { return g.indexOf(a) > -1 && g.indexOf(b) > -1; })[0];
+      if (loop) { var o = centroid(loop), nx = -dy / len, ny = dx / len; if (nx * (mx - o[0]) + ny * (my - o[1]) < 0) { nx = -nx; ny = -ny; } c = [mx + nx * len * L.bend, my + ny * len * L.bend]; }
+      function trim(P, Q, d) { var vx = Q[0] - P[0], vy = Q[1] - P[1], l = Math.hypot(vx, vy); return [P[0] + vx / l * d, P[1] + vy / l * d]; }
+      var s = trim(A, c, rad(a) + 5), e = trim(B, c, rad(b) + 9);
+      return 'M' + s[0].toFixed(1) + ' ' + s[1].toFixed(1) + 'Q' + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1);
+    }
+    function loopPath(k) { var P = L.p[k], q = rad(k) + L.ring, a0 = -Math.PI / 2 + .35, a1 = -Math.PI / 2 - .35 + 2 * Math.PI;
+      return 'M' + (P[0] + q * Math.cos(a0)).toFixed(1) + ' ' + (P[1] + q * Math.sin(a0)).toFixed(1) + 'A' + q + ' ' + q + ' 0 1 1 ' + (P[0] + q * Math.cos(a1)).toFixed(1) + ' ' + (P[1] + q * Math.sin(a1)).toFixed(1); }
+    function labels(k, g) {
+      var n = NODES[k], P = L.p[k], r = rad(k) + (k === 'bim' ? L.ring : 0), pos = L.l[k], lines = n.lab.map(function (t) { return [t, 'af-lab', L.fs]; });
+      var sub = n.sub && mode === 'narrow' ? n.sub.replace(/ · (?=[^·]*$)/, '|') : n.sub;
+      if (sub) sub.split('|').forEach(function (t) { lines.push([t, 'af-sub', L.ss]); });
+      if (k === 'bim' && mode === 'narrow') { lines = 'Modelo|BIM'.split('|').map(function (t) { return [t, 'af-lab', L.fs]; }); lines.push(['↻ con IA', 'af-sub af-loopsub', L.ss]); r = rad(k) + L.ring - 6; }
+      var tot = (lines.length - 1) * L.lh, x = P[0], y, anc = 'middle';
+      if (pos === 'b') y = P[1] + r + L.fs + 6;
+      else if (pos === 't') y = P[1] - r - 10 - tot;
+      else { x = P[0] + (pos === 'l' ? -1 : 1) * (r + 14); anc = pos === 'l' ? 'end' : 'start'; y = P[1] - tot / 2 + L.fs * .35; }
+      lines.forEach(function (ln, i) { mk('text', { x: x, y: (y + i * L.lh).toFixed(1), 'text-anchor': anc, 'class': ln[1], style: 'font-size:' + ln[2] + 'px' }, g).textContent = ln[0]; });
+    }
+    function build() {
+      var nm = fig.clientWidth >= 700 ? 'wide' : 'narrow'; if (nm === mode) return; mode = nm; L = LAY[nm];
+      host.innerHTML = ''; el = {}; edges = []; shown = {}; lastStep = -2;
+      svg = mk('svg', { viewBox: '0 0 ' + L.w + ' ' + L.h, 'aria-hidden': 'true' }, host);
+      var defs = mk('defs', {}, svg);
+      ['off', 'on'].forEach(function (m) { var mr = mk('marker', { id: 'af-ar-' + m, viewBox: '0 0 10 10', refX: 6, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs); mk('path', { d: 'M0 0L10 5L0 10z', 'class': 'af-ar-' + m }, mr); });
+      var gE = mk('g', {}, svg), gN = mk('g', {}, svg), gL = mk('g', {}, svg);
+      STEPS.forEach(function (s, i) {
+        var d = s[0] === s[1] ? loopPath(s[0]) : edgePath(s[0], s[1]);
+        var ghost = mk('path', { d: d, 'class': 'af-ghost', 'marker-end': 'url(#af-ar-off)' }, gE);
+        var live = mk('path', { d: d, 'class': 'af-live' }, gE), len = live.getTotalLength();
+        live.style.strokeDasharray = len + ' ' + len; live.style.strokeDashoffset = len;
+        edges.push({ ghost: ghost, live: live, len: len, done: false });
+      });
+      var bim = L.p.bim, q = rad('bim') + L.ring;
+      el.loopLab = mk('text', { x: bim[0], y: bim[1] - q - 9, 'text-anchor': 'middle', 'class': 'af-sub af-loop', style: 'font-size:' + L.ss + 'px' + (mode === 'narrow' ? ';display:none' : '') }, gL);
+      el.loopLab.textContent = LOOPLAB.replace('|', ' ');
+      Object.keys(NODES).forEach(function (k) {
+        var P = L.p[k], r = rad(k), s = r / 19;
+        var g = mk('g', { transform: 'translate(' + P[0] + ' ' + P[1] + ')', 'class': 'af-node' + (NODES[k].end ? ' af-end' : '') + (NODES[k].big ? ' af-hub' : '') }, gN);
+        var pop = mk('g', { 'class': 'af-pop' }, g);
+        mk('circle', { r: r + 8, 'class': 'af-ping' }, pop);
+        mk('circle', { r: r, 'class': 'af-c' }, pop);
+        mk('path', { d: ICON[NODES[k].ic], transform: 'translate(' + (-12 * s) + ' ' + (-12 * s) + ') scale(' + s + ')', 'class': 'af-ic' }, pop);
+        var lg = mk('g', { 'class': 'af-l' }, gL); labels(k, lg);
+        el[k] = { g: g, l: lg };
+      });
+      dot = mk('g', { 'class': 'af-dot', style: 'opacity:0' }, svg);
+      glow = mk('circle', { r: 11, 'class': 'af-glow' }, dot); mk('circle', { r: 4.5, 'class': 'af-core' }, dot);
+      render(clock);
+    }
+    function on(k, v) {
+      if (!!shown[k] === v) return; shown[k] = v;
+      el[k].g.classList.toggle('on', v); el[k].l.classList.toggle('on', v);
+      if (v && !reduce) { var p = el[k].g.querySelector('.af-ping'); p.classList.remove('go'); void p.getBBox(); p.classList.add('go'); }
+    }
+    function ease(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function render(t) {
+      if (!svg) return;
+      var cyc = reduce ? T_END : t % T_CYCLE, fade = cyc > T_END + T_HOLD ? 1 - (cyc - T_END - T_HOLD) / T_FADE : 1;
+      svg.style.opacity = Math.max(0, fade).toFixed(3);
+      var reached = { web: true }, cur = -1, dotP = null;
+      STEPS.forEach(function (s, i) {
+        var e = edges[i], T = s[0] === s[1] ? T_LOOP : T_EDGE, p = Math.max(0, Math.min(1, (cyc - starts[i]) / T));
+        if (cyc >= starts[i]) cur = i;
+        var k = ease(p); e.live.style.strokeDashoffset = (e.len * (1 - k)).toFixed(1);
+        var done = p >= 1; if (done !== e.done) { e.done = done; e.ghost.setAttribute('marker-end', done ? 'url(#af-ar-on)' : 'url(#af-ar-off)'); e.ghost.classList.toggle('done', done); }
+        if (p > 0 && p < 1) dotP = e.live.getPointAtLength(e.len * k);
+        if (done) reached[s[1]] = true;
+      });
+      Object.keys(NODES).forEach(function (k) { on(k, !!reached[k]); });
+      el.loopLab.classList.toggle('on', edges[4].done || cyc >= starts[4]);
+      if (dotP) { dot.setAttribute('transform', 'translate(' + dotP.x.toFixed(1) + ' ' + dotP.y.toFixed(1) + ')'); dot.style.opacity = 1; } else dot.style.opacity = 0;
+      var stp = Math.max(0, cur);
+      if (stp !== lastStep) { lastStep = stp; capN.textContent = String(stp + 1).padStart(2, '0') + '/' + STEPS.length; capT.textContent = STEPS[stp][2]; }
+    }
+    function frame(now) {
+      if (!active) { last = null; return; }
+      if (last !== null) clock += now - last; last = now;
+      render(clock); requestAnimationFrame(frame);
+    }
+    build();
+    if (window.ResizeObserver) new ResizeObserver(function () { build(); }).observe(fig); else window.addEventListener('resize', build);
+    if (reduce) { clock = T_END; render(clock); return; }
+    if (window.IntersectionObserver) new IntersectionObserver(function (es) { var v = es[0].isIntersecting; if (v && !active) { active = true; requestAnimationFrame(frame); } else if (!v) active = false; }, { threshold: .3 }).observe(fig);
+    else { active = true; requestAnimationFrame(frame); }
+  })();
+
   /* ---------- Intro: full name, fade, then each S writes its branch ---------- */
   var intro = document.getElementById('intro'), timers = [], raf = 0;
   var ig = intro.querySelector('.intro-svg g'), ipaths = [].slice.call(ig.querySelectorAll('path')), twin = intro.querySelector('.intro-svg .twin'), heroEl = document.querySelector('.hero');
@@ -977,8 +1124,10 @@
     function build() {
       var fw = fig.clientWidth, fh = fig.clientHeight || 1, nw = fw >= 640 && fw / fh > 1.7 ? 'wide' : 'narrow';
       // on a phone the drawing takes the whole width it is given: the extra goes into the gaps between columns and lanes
-      var W = nw === 'narrow' ? Math.max(360, Math.min(520, Math.round(LAY.narrow.h * fw / fh))) : LAY.wide.w, key = nw + W;
+      // on a wide screen too: the drawing grows sideways into the room it has instead of just scaling up
+      var W = nw === 'narrow' ? Math.max(360, Math.min(520, Math.round(LAY.narrow.h * fw / fh))) : Math.max(LAY.wide.w, Math.min(1800, Math.round(LAY.wide.h * fw / fh / 10) * 10)), key = nw + W;
       if (key === size) return; size = key; L = Object.assign({}, LAY[nw]);
+      if (nw === 'wide') { var gx = Math.min(1, (W - LAY.wide.w) / 400); L.w = W; L.a1 = W - 42; L.trf += 1.6 * gx; L.fs += 1 * gx; }
       if (nw === 'narrow') { var ex = W - 360; L.w = W; L.c1 = 72 + ex * .28; L.l0 = L.c1 + 12 + ex * .18; L.unit = (W - 4 - L.l0) / 4; L.g = 5 + Math.min(7, ex * .1); }
       var hz = L.hz, h = '<svg viewBox="0 0 ' + L.w + ' ' + L.h + '" preserveAspectRatio="xMinYMid meet">';
       bars = []; conns = [];
