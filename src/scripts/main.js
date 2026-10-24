@@ -630,7 +630,8 @@
       var iso = document.querySelector('.top .logo-mono'), word = document.querySelector('.foot .logo'), H = L.p.hub, R0 = rad('hub');
       if (iso) { var ig = mk('svg', { x: -R0, y: -R0, width: 2 * R0, height: 2 * R0, viewBox: iso.getAttribute('viewBox'), 'class': 'af-iso' }, el.hub.g.querySelector('.af-pop')); [].slice.call(iso.querySelectorAll('path:not(.disc)')).forEach(function (q) { mk('path', { d: q.getAttribute('d') }, ig); }); }
       el.brand = mk('g', { 'class': 'af-brand' }, gL);
-      if (word) { var ww = mode === 'wide' ? 150 : 104, wh = ww * 332 / 1379, wg = mk('svg', { x: H[0] - ww / 2, y: H[1] + R0 + 14, width: ww, height: wh, viewBox: word.getAttribute('viewBox') }, el.brand); [].slice.call(word.querySelectorAll('path')).forEach(function (q) { mk('path', { d: q.getAttribute('d') }, wg); }); }
+      if (word) { var ww = mode === 'wide' ? 150 : 104, wh = ww * 332 / 1379, wg = mk('svg', { x: H[0] - ww / 2, y: H[1] + R0 + 14, width: ww, height: wh, viewBox: word.getAttribute('viewBox') }, el.brand); [].slice.call(word.querySelectorAll('path')).forEach(function (q) { mk('path', { d: q.getAttribute('d'), pathLength: 1 }, wg); }); }
+      mk('circle', { r: R0, 'class': 'af-flash' }, el.hub.g.querySelector('.af-pop'));
       // the loop's own title and subtitle
       var C = loopCentre(), ll = linesOf(LOOP.lab, LOOP.sub, 'af-lab af-acc');
       el.loop = mk('g', { 'class': 'af-l' }, gL);
@@ -669,7 +670,7 @@
       if (endOn !== !!el.end.or) { el.end.or = endOn; el.end.g.classList.toggle('orange', endOn); if (endOn && !reduce) ping('end'); }
       if (hubOn !== !!el.hub.or) { el.hub.or = hubOn; el.hub.g.classList.toggle('orange', hubOn); el.hub.g.classList.toggle('blink', hubOn && !reduce); if (hubOn && !reduce) ping('hub'); }
       var brand = !reduce && cyc >= BRAND_AT;
-      if (brand !== !!el.brand.on) { el.brand.on = brand; el.hub.g.classList.toggle('brand', brand); el.hub.l.classList.toggle('off', brand); el.brand.classList.toggle('on', brand); }
+      if (brand !== !!el.brand.on) { el.brand.on = brand; el.hub.g.classList.toggle('brand', brand); el.hub.l.classList.toggle('off', brand); el.brand.classList.toggle('on', brand); if (brand) ping('hub', 420); }
       var op = {};
       Object.keys(NODES).forEach(function (k) { op[k] = reduce ? 1 : 1 - Math.max(0, Math.min(1, (cyc - fadeAt(k)) / F_DUR)); el[k].g.style.opacity = op[k]; el[k].l.style.opacity = op[k] < 1 ? op[k] * (el[k].l.classList.contains('on') ? 1 : .38) : ''; });
       el.loop.style.opacity = op.bim < 1 ? op.bim : '';
