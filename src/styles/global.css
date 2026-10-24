@@ -574,7 +574,7 @@ fieldset { border: 0; margin: 0; padding: 0; }
 
 /* Space: automated commission flow */
 .autoflow-fig { margin: 0; display: grid; gap: 16px; }
-.autoflow svg { display: block; width: 100%; height: auto; overflow: visible; }
+.autoflow > svg { display: block; width: 100%; height: auto; overflow: visible; }
 .autoflow-cap { display: flex; gap: 14px; align-items: baseline; min-height: 25px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 16px; line-height: 25px; color: var(--ink); }
 .autoflow-cap .n { flex: none; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--accent-text); font-variant-numeric: tabular-nums; }
 .af-ghost { fill: none; stroke: var(--line-strong); stroke-width: 1.3; stroke-dasharray: 3 5; transition: stroke .4s; }
@@ -621,3 +621,13 @@ fieldset { border: 0; margin: 0; padding: 0; }
   #p-metodo .flow-fig { margin-right: calc(-1 * var(--bleed)); }
   #p-metodo .flow-fig figcaption { padding-right: var(--bleed); }
 }
+
+.af-iso { opacity: 0; transition: opacity .6s; overflow: visible; }
+.af-iso path { fill: none; stroke: #ffffff; stroke-width: 30; stroke-linecap: round; stroke-linejoin: round; }
+.af-ic { transition: stroke .45s, opacity .5s; }
+.af-hub.brand .af-ic { opacity: 0; }
+.af-hub.brand .af-iso { opacity: 1; }
+.af-l.off { opacity: 0 !important; transition: opacity .5s; }
+.af-brand { opacity: 0; transition: opacity .6s .15s; }
+.af-brand.on { opacity: 1; }
+.af-brand path { fill: none; stroke: var(--ink); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; }

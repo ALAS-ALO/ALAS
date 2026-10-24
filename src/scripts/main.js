@@ -536,7 +536,7 @@
     function dur(s) { return s.k === 'loop' ? T_LOOP : s.k === 'sync' ? T_SYNC : s.k === 'close' ? T_EDGE * 1.2 : T_EDGE; }
     STEPS.forEach(function (s) { starts.push(tt); tt += dur(s) + T_DWELL; });
     // the close: the closed project lights up, its pulse runs back to internal management, which blinks while every other node fades out in order, and then fades itself
-    var T_END = tt - T_DWELL, HUB_FADE = T_END + F0 + FADE_ORDER.length * F_GAP + 700, T_CYCLE = HUB_FADE + F_DUR + 900;
+    var T_END = tt - T_DWELL, BRAND_AT = T_END + F0 + (FADE_ORDER.length - 1) * F_GAP + F_DUR, HUB_FADE = BRAND_AT + 2600, T_CYCLE = HUB_FADE + F_DUR + 900;
     function fadeAt(k) { return k === 'hub' ? HUB_FADE : T_END + F0 + FADE_ORDER.indexOf(k) * F_GAP; }
     var L, mode = '', svg, el = {}, edges = [], dot, shown = {}, lastStep = -2, finalOn = false, syncOn = false, active = false, clock = 0, last = null;
 
@@ -626,6 +626,11 @@
         var lg = mk('g', { 'class': 'af-l' }, gL); nodeLabel(k, lg);
         el[k] = { g: g, l: lg };
       });
+      // the end of the cycle: internal management becomes ALAS, the isotype in its disc and the full wordmark underneath
+      var iso = document.querySelector('.top .logo-mono'), word = document.querySelector('.foot .logo'), H = L.p.hub, R0 = rad('hub');
+      if (iso) { var ig = mk('svg', { x: -R0, y: -R0, width: 2 * R0, height: 2 * R0, viewBox: iso.getAttribute('viewBox'), 'class': 'af-iso' }, el.hub.g.querySelector('.af-pop')); [].slice.call(iso.querySelectorAll('path:not(.disc)')).forEach(function (q) { mk('path', { d: q.getAttribute('d') }, ig); }); }
+      el.brand = mk('g', { 'class': 'af-brand' }, gL);
+      if (word) { var ww = mode === 'wide' ? 150 : 104, wh = ww * 332 / 1379, wg = mk('svg', { x: H[0] - ww / 2, y: H[1] + R0 + 14, width: ww, height: wh, viewBox: word.getAttribute('viewBox') }, el.brand); [].slice.call(word.querySelectorAll('path')).forEach(function (q) { mk('path', { d: q.getAttribute('d') }, wg); }); }
       // the loop's own title and subtitle
       var C = loopCentre(), ll = linesOf(LOOP.lab, LOOP.sub, 'af-lab af-acc');
       el.loop = mk('g', { 'class': 'af-l' }, gL);
@@ -663,9 +668,12 @@
       var endOn = edges[11].done, hubOn = edges[12].done;
       if (endOn !== !!el.end.or) { el.end.or = endOn; el.end.g.classList.toggle('orange', endOn); if (endOn && !reduce) ping('end'); }
       if (hubOn !== !!el.hub.or) { el.hub.or = hubOn; el.hub.g.classList.toggle('orange', hubOn); el.hub.g.classList.toggle('blink', hubOn && !reduce); if (hubOn && !reduce) ping('hub'); }
+      var brand = !reduce && cyc >= BRAND_AT;
+      if (brand !== !!el.brand.on) { el.brand.on = brand; el.hub.g.classList.toggle('brand', brand); el.hub.l.classList.toggle('off', brand); el.brand.classList.toggle('on', brand); }
       var op = {};
       Object.keys(NODES).forEach(function (k) { op[k] = reduce ? 1 : 1 - Math.max(0, Math.min(1, (cyc - fadeAt(k)) / F_DUR)); el[k].g.style.opacity = op[k]; el[k].l.style.opacity = op[k] < 1 ? op[k] * (el[k].l.classList.contains('on') ? 1 : .38) : ''; });
       el.loop.style.opacity = op.bim < 1 ? op.bim : '';
+      el.brand.style.opacity = op.hub < 1 ? op.hub : ''; el.brand.style.transition = op.hub < 1 ? 'none' : '';
       STEPS.forEach(function (s, i) { var e = edges[i]; if (!e) return; var o = Math.min(op[s.a], op[s.b]); e.live.style.opacity = o; if (e.ghost) e.ghost.style.opacity = o; });
       if (dotP) { dot.setAttribute('transform', 'translate(' + dotP.x.toFixed(1) + ' ' + dotP.y.toFixed(1) + ')'); dot.style.opacity = 1; dot.classList.toggle('orange', dotO); } else dot.style.opacity = 0;
       var stp = Math.max(0, cur);
