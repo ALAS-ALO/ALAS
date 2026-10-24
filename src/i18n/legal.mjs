@@ -19,10 +19,10 @@ export const LEGAL = {
           <div><dt>Domicilio</dt><dd>${S.DOMICILIO}</dd></div>
           <div><dt>Correo electrónico</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
         ['Datos profesionales', `<p>La arquitectura es una profesión regulada. Datos del profesional responsable:</p><dl>
-          <div><dt>Título</dt><dd>Arquitecto, expedido en ${S.TITULO_PAIS}</dd></div>
-          <div><dt>Colegio profesional</dt><dd>${S.COLEGIO}</dd></div>
+          <div><dt>Título</dt><dd>Arquitecto. Grado por la Universidade da Coruña y máster habilitante por la Universidad de Granada (España)</dd></div>
+          <div><dt>Colegio profesional</dt><dd>Colegio Oficial de Arquitectos de Galicia (COAG)</dd></div>
           <div><dt>Número de colegiado</dt><dd>${S.COLEGIADO}</dd></div></dl>
-          <p>Normas profesionales aplicables: Ley 38/1999, de Ordenación de la Edificación, los estatutos del colegio profesional y el Código Deontológico de los Arquitectos, que pueden consultarse en la web del Consejo Superior de los Colegios de Arquitectos de España (cscae.com) y en la del colegio correspondiente.</p>`],
+          <p>Normas profesionales aplicables: Ley 38/1999, de Ordenación de la Edificación, los estatutos del COAG y el Código Deontológico de los Arquitectos, que pueden consultarse en la web del Consejo Superior de los Colegios de Arquitectos de España (cscae.com) y en la del COAG (coag.es).</p>`],
         ['Objeto del sitio', '<p>Este sitio informa sobre los servicios de arquitectura de ALAS Studio y de consultoría tecnológica de ALAS Space, y permite ponerse en contacto con el titular.</p>'],
         ['Propiedad intelectual e industrial', '<p>Los textos, diagramas, animaciones, diseño gráfico y logotipos de ALAS pertenecen al titular. No se permite reproducirlos, distribuirlos ni transformarlos sin autorización por escrito.</p><p>Los logotipos de otras empresas pertenecen a sus titulares y solo se muestran para identificar a empresas con las que hemos trabajado. Los vídeos de las fichas de servicios proceden de bancos de imágenes con licencia de uso.</p>'],
         ['Responsabilidad', '<p>La información de este sitio es orientativa y no constituye una oferta vinculante. Los ejemplos, simulaciones, tiempos y cifras de los diagramas son ilustrativos. El alcance, el plazo y los honorarios de cada encargo se fijan siempre en una propuesta por escrito.</p><p>El titular no responde de los contenidos de sitios externos a los que se pueda enlazar desde esta web.</p>'],
@@ -73,10 +73,10 @@ export const LEGAL = {
           <div><dt>Address</dt><dd>${S.DOMICILIO}</dd></div>
           <div><dt>Email</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
         ['Professional details', `<p>Architecture is a regulated profession in Spain. Details of the professional in charge:</p><dl>
-          <div><dt>Qualification</dt><dd>Architect, awarded in ${S.TITULO_PAIS}</dd></div>
-          <div><dt>Professional association</dt><dd>${S.COLEGIO}</dd></div>
+          <div><dt>Qualification</dt><dd>Architect. Degree from the University of A Coruña and qualifying master's degree from the University of Granada (Spain)</dd></div>
+          <div><dt>Professional association</dt><dd>Official Association of Architects of Galicia (COAG)</dd></div>
           <div><dt>Membership number</dt><dd>${S.COLEGIADO}</dd></div></dl>
-          <p>Applicable professional rules: Spanish Law 38/1999 on Building Regulation, the statutes of the professional association and the Code of Ethics for Architects, available on the website of the Spanish Council of Architects' Associations (cscae.com) and on that of the relevant association.</p>`],
+          <p>Applicable professional rules: Spanish Law 38/1999 on Building Regulation, the statutes of COAG and the Code of Ethics for Architects, available on the website of the Spanish Council of Architects' Associations (cscae.com) and on that of COAG (coag.es).</p>`],
         ['Purpose of the site', '<p>This site describes the architecture services of ALAS Studio and the technology consultancy services of ALAS Space, and lets you get in touch with the owner.</p>'],
         ['Intellectual and industrial property', '<p>The texts, diagrams, animations, graphic design and logos of ALAS belong to the owner. They may not be reproduced, distributed or transformed without written permission.</p><p>Other companies\' logos belong to their owners and are shown only to identify companies we have worked with. The videos on the service cards come from stock libraries under a licence of use.</p>'],
         ['Liability', '<p>The information on this site is for guidance only and is not a binding offer. The examples, simulations, times and figures in the diagrams are illustrative. The scope, timeline and fees of each commission are always set out in a written proposal.</p><p>The owner is not responsible for the content of external sites linked from this website.</p>'],
@@ -127,10 +127,10 @@ export const LEGAL = {
           <div><dt>Domicilio</dt><dd>${S.DOMICILIO}</dd></div>
           <div><dt>Correo electrónico</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
         ['Datos profesionais', `<p>A arquitectura é unha profesión regulada. Datos do profesional responsable:</p><dl>
-          <div><dt>Título</dt><dd>Arquitecto, expedido en ${S.TITULO_PAIS}</dd></div>
-          <div><dt>Colexio profesional</dt><dd>${S.COLEGIO}</dd></div>
+          <div><dt>Título</dt><dd>Arquitecto. Grao pola Universidade da Coruña e mestrado habilitante pola Universidade de Granada (España)</dd></div>
+          <div><dt>Colexio profesional</dt><dd>Colexio Oficial de Arquitectos de Galicia (COAG)</dd></div>
           <div><dt>Número de colexiado</dt><dd>${S.COLEGIADO}</dd></div></dl>
-          <p>Normas profesionais aplicables: Lei 38/1999, de Ordenación da Edificación, os estatutos do colexio profesional e o Código Deontolóxico dos Arquitectos, que se poden consultar na web do Consello Superior dos Colexios de Arquitectos de España (cscae.com) e na do colexio correspondente.</p>`],
+          <p>Normas profesionais aplicables: Lei 38/1999, de Ordenación da Edificación, os estatutos do COAG e o Código Deontolóxico dos Arquitectos, que se poden consultar na web do Consello Superior dos Colexios de Arquitectos de España (cscae.com) e na do COAG (coag.es).</p>`],
         ['Obxecto do sitio', '<p>Este sitio informa sobre os servizos de arquitectura de ALAS Studio e de consultoría tecnolóxica de ALAS Space, e permite poñerse en contacto co titular.</p>'],
         ['Propiedade intelectual e industrial', '<p>Os textos, diagramas, animacións, deseño gráfico e logotipos de ALAS pertencen ao titular. Non se permite reproducilos, distribuílos nin transformalos sen autorización por escrito.</p><p>Os logotipos doutras empresas pertencen aos seus titulares e só se amosan para identificar empresas coas que traballamos. Os vídeos das fichas de servizos proceden de bancos de imaxes con licenza de uso.</p>'],
         ['Responsabilidade', '<p>A información deste sitio é orientativa e non constitúe unha oferta vinculante. Os exemplos, simulacións, tempos e cifras dos diagramas son ilustrativos. O alcance, o prazo e os honorarios de cada encargo fíxanse sempre nunha proposta por escrito.</p><p>O titular non responde dos contidos de sitios externos aos que se poida ligar desde esta web.</p>'],

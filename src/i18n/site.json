@@ -1,11 +1,9 @@
 {
  "_note": "Datos del titular. Sustituye los marcadores entre corchetes por los datos reales; se aplican a toda la web en los tres idiomas.",
  "CORREO": "[CORREO]",
- "TITULAR": "[TITULAR]",
+ "TITULAR": "Adrián López Otero",
  "NIF": "[NIF]",
  "DOMICILIO": "[DOMICILIO]",
- "COLEGIO": "[COLEGIO PROFESIONAL]",
  "COLEGIADO": "[Nº COLEGIADO]",
- "TITULO_PAIS": "[ESTADO DE EXPEDICIÓN DEL TÍTULO]",
  "ACTUALIZADO": "24/10/2026"
 }
