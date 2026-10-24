@@ -527,8 +527,8 @@
       wide: { w: 1200, h: 650, r: 30, R: 44, fs: 15, ss: 12, lh: 17, bend: .16, lr: 13, side: 'top', sub: 3,
         p: { web: [80, 345], form: [255, 345], hub: [600, 345], agent: [420, 175], bim: [600, 132], docs: [780, 175], build: [780, 515], gov: [420, 515], end: [1115, 345] },
         l: { web: 'b', form: 'b', hub: 'b', agent: 'l', bim: 'b', docs: 'r', build: 'r', gov: 'l', end: 'b' } },
-      narrow: { w: 360, h: 1010, r: 22, R: 30, fs: 12.5, ss: 10.5, lh: 14, bend: -.16, hubBend: .05, lr: 10, side: 'left', sub: 4,
-        p: { web: [40, 36], form: [40, 130], hub: [64, 520], agent: [150, 250], bim: [150, 385], docs: [150, 520], build: [150, 680], gov: [150, 815], end: [64, 960] },
+      narrow: { w: 360, h: 1150, r: 22, R: 30, fs: 15, ss: 14, lh: 18, bend: -.16, hubBend: .05, lr: 10, side: 'left', sub: 4,
+        p: { web: [40, 40], form: [40, 150], hub: [64, 580], agent: [150, 290], bim: [150, 440], docs: [150, 580], build: [150, 760], gov: [150, 910], end: [64, 1060] },
         l: { web: 'r', form: 'r', hub: 'b', agent: 'r', bim: 'r', docs: 'r', build: 'r', gov: 'r', end: 'r' } }
     };
     var T_EDGE = 1050, T_LOOP = 1700, T_SYNC = 3400, T_DWELL = 520, FADE_ORDER = ['web', 'form', 'agent', 'bim', 'docs', 'build', 'gov', 'end'], F0 = 700, F_GAP = 280, F_DUR = 450;
@@ -574,12 +574,12 @@
       var C = loopCentre(), q = L.lr, back = L.side === 'top' ? Math.PI / 2 : 0, a0 = back + .55, a1 = back - .55 + 2 * Math.PI;
       return 'M' + (C[0] + q * Math.cos(a0)).toFixed(1) + ' ' + (C[1] + q * Math.sin(a0)).toFixed(1) + 'A' + q + ' ' + q + ' 0 1 1 ' + (C[0] + q * Math.cos(a1)).toFixed(1) + ' ' + (C[1] + q * Math.sin(a1)).toFixed(1);
     }
-    function subLines(txt) {
+    function subLines(txt, max) {
       var parts = txt.split('|').map(function (t) { return t.trim(); });
       if (mode === 'wide') return parts.join(' ').length < 34 ? [parts.join(' ')] : parts;
       // on a phone: rewrap to the width beside the nodes
       var out = [], line = '';
-      parts.join(' ').split(' ').reduce(function (a, w) { if (w === '·' && a.length) a[a.length - 1] += ' ·'; else a.push(w); return a; }, []).forEach(function (w) { if (line && (line + ' ' + w).length > 25) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
+      parts.join(' ').split(' ').reduce(function (a, w) { if (w === '·' && a.length) a[a.length - 1] += ' ·'; else a.push(w); return a; }, []).forEach(function (w) { if (line && (line + ' ' + w).length > (max || 19)) { out.push(line); line = w; } else line = line ? line + ' ' + w : w; });
       if (line) out.push(line); return out;
     }
     function titleLines(txt) { return mode === 'narrow' && txt.length > (txt === NODES.hub.lab ? 10 : 19) && txt.indexOf(' ') > 0 ? [txt.slice(0, txt.lastIndexOf(' ', 16) > 0 ? txt.lastIndexOf(' ', 16) : txt.indexOf(' ')), txt.slice((txt.lastIndexOf(' ', 16) > 0 ? txt.lastIndexOf(' ', 16) : txt.indexOf(' ')) + 1)] : [txt]; }
@@ -595,9 +595,9 @@
       if (pos === 't') return [P[0], P[1] - r - 10 - tot, 'middle'];
       return [P[0] + (pos === 'l' ? -1 : 1) * (r + 14), P[1] - tot / 2 + L.fs * .35, pos === 'l' ? 'end' : 'start'];
     }
-    function linesOf(lab, sub, cls) { var lines = titleLines(lab).map(function (t) { return [t, cls || 'af-lab', L.fs]; }); subLines(sub).forEach(function (t) { lines.push([t, 'af-sub', L.ss]); }); return lines; }
+    function linesOf(lab, sub, cls, max) { var lines = titleLines(lab).map(function (t) { return [t, cls || 'af-lab', L.fs]; }); subLines(sub, max).forEach(function (t) { lines.push([t, 'af-sub', L.ss]); }); return lines; }
     function nodeLabel(k, g) {
-      var lines = linesOf(NODES[k].lab, NODES[k].sub), extra = k === 'bim' && L.side === 'left' ? linesOf(LOOP.lab, LOOP.sub).length : 0;
+      var lines = linesOf(NODES[k].lab, NODES[k].sub, null, k === 'hub' ? 10 : 0), extra = k === 'bim' && L.side === 'left' ? linesOf(LOOP.lab, LOOP.sub).length : 0;
       var q = place(L.p[k], rad(k), L.l[k], lines.length + extra); block(g, q[0], q[1], q[2], lines);
       if (extra) el.loopAt = [q[0], q[1] + lines.length * L.lh + 4, q[2]];
     }
@@ -1089,8 +1089,8 @@
     var LAY = {
       wide: { w: 1200, h: 480, fs: 18, ics: 1.9, bt: 26, bs: 15, wordW: 168, lbl: 'side',
         n: { studio: [400, 240, 92], space: [800, 240, 92], word: [600, 240], part: [215, 140, 50], com: [215, 340, 50], est: [985, 140, 50], con: [985, 340, 50], adm: [600, 62, 44], prom: [600, 418, 44] } },
-      narrow: { w: 360, h: 372, fs: 10.5, ics: 1.4, bt: 13, bs: 9, wordW: 76, lbl: 'below',
-        n: { studio: [96, 190, 34], space: [264, 190, 34], word: [180, 190], part: [40, 96, 20], com: [40, 284, 20], est: [320, 96, 20], con: [320, 284, 20], adm: [180, 62, 20], prom: [180, 318, 20] } }
+      narrow: { w: 360, h: 380, fs: 14, ics: 1.4, bt: 14.5, bs: 13.4, wordW: 76, lbl: 'below',
+        n: { studio: [96, 190, 34], space: [264, 190, 34], word: [180, 190], part: [52, 92, 20], com: [52, 288, 20], est: [308, 92, 20], con: [308, 288, 20], adm: [180, 58, 20], prom: [180, 322, 20] } }
     };
     var SHOW = { studio: 0, word: 350, space: 650, part: 1100, com: 1200, est: 1300, con: 1400, adm: 1500, prom: 1600 };
     var lay, n, size = '', els = {}, edges = [], t0 = null;
@@ -1167,13 +1167,15 @@
     var PH = [
       { t: [0, 8], k: 'base', bars: ['Datos'] },
       { t: [9.6, 20.4], k: 'lane', bars: ['Análisis|normativo', 'Simulaciones', 'Propuestas|iniciales'] },
-      { t: [22, 33.4], k: 'mix', bars: ['Propuestas|visuales', 'Modelo BIM', '↻ Iteraciones|con IA'], lanes: [[0, 1.15], [1.45, 2.55], [2.85, 4]], chain: [false, true, false] },
+      { t: [22, 33.4], k: 'mix', bars: ['Propuestas|visuales', 'Modelo BIM', '↻ Iteraciones|con IA'], lanes: [[0, 1.3], [1.45, 2.55], [2.7, 4]], chain: [false, true, false] },
       { t: [35, 47.4], k: 'lane', bars: ['Planos', 'Sistemas|energéticos', 'Sistemas|estructurales', 'Mediciones y|presupuestos'], small: true },
       { t: [49, 57.5], k: 'res', bars: ['Tramitación'] }
     ], OURS = 59.5;
+    // shorter names for the four parallel outputs, so they keep a legible size on a phone
+    var SHORT = { 'Sistemas|energéticos': 'Energía', 'Sistemas|estructurales': 'Estructura', 'Mediciones y|presupuestos': 'Mediciones' };
     var LAY = {
       wide: { w: 1100, h: 396, hz: true, tf: 20, sf: 12.5, fs: 14, trf: 11, a0: 4, a1: 1058, t1: 14, s1: 37, bar: 54, bh: 46, t2: 140, s2: 163, l0: 188, unit: 50, g: 7 },
-      narrow: { w: 360, h: 452, hz: false, tf: 13.5, sf: 9.5, fs: 10.4, trf: 8.8, a0: 46, a1: 420, c0: 3, c1: 72, l0: 84, unit: 68, g: 5, er: 9 }
+      narrow: { w: 360, h: 466, hz: false, tf: 13.5, sf: 14, fs: 13.9, trf: 13, a0: 66, a1: 434, c0: 3, c1: 30, l0: 44, unit: 77, g: 5, er: 9 }
     };
     var size = '', L, el = {}, bars = [], conns = [], t0 = null, itT = [0, 0];
     function T(p) { return L.a0 + p / 100 * (L.a1 - L.a0); }
@@ -1196,14 +1198,14 @@
       var W = nw === 'narrow' ? Math.max(360, Math.min(520, Math.round(LAY.narrow.h * fw / fh))) : Math.max(LAY.wide.w, Math.min(1800, Math.round(LAY.wide.h * fw / fh / 10) * 10)), key = nw + W;
       if (key === size) return; size = key; L = Object.assign({}, LAY[nw]);
       if (nw === 'wide') { var gx = Math.min(1, (W - LAY.wide.w) / 400); L.w = W; L.a1 = W - 42; L.trf += 1.6 * gx; L.fs += 1 * gx; }
-      if (nw === 'narrow') { var ex = W - 360; L.w = W; L.c1 = 72 + ex * .28; L.l0 = L.c1 + 12 + ex * .18; L.unit = (W - 4 - L.l0) / 4; L.g = 5 + Math.min(7, ex * .1); }
+      if (nw === 'narrow') { var ex = W - 360; L.w = W; L.c1 = 30 + ex * .08; L.l0 = L.c1 + 14 + ex * .06; L.unit = (W - 4 - L.l0) / 4; L.g = 5 + Math.min(7, ex * .1); }
       var hz = L.hz, h = '<svg viewBox="0 0 ' + L.w + ' ' + L.h + '" preserveAspectRatio="xMinYMid meet">';
       bars = []; conns = [];
       // traditional: a single line of tasks
       var tr = [];
       TRAD.forEach(function (s, i) {
         var r = hz ? { x: T(s[1]) + (i ? 1.5 : 0), y: L.bar, w: T(s[2]) - T(s[1]) - (i ? 3 : 1.5), h: L.bh } : { x: L.c0, y: T(s[1]) + (i ? 1 : 0), w: L.c1 - L.c0, h: T(s[2]) - T(s[1]) - (i ? 2 : 1) };
-        h += slot(r, 'fl-seg', 'fl-tr' + i) + label(r, s[0], L.trf, 'fl-in');
+        h += slot(r, 'fl-seg', 'fl-tr' + i) + (hz ? label(r, s[0], L.trf, 'fl-in') : '');
         bars.push({ id: 'fl-tr' + i, r: r, t: [s[1], s[2]], lab: i });
       });
       // ours: phases, each split into parallel lanes, every lane linked to every lane of the next phase
@@ -1213,7 +1215,8 @@
         ph.bars.forEach(function (name, bi) {
           var ln = ph.lanes ? ph.lanes[bi] : [bi * 4 / m, (bi + 1) * 4 / m], r = box(ph.t[0], ph.t[1], ln[0], ln[1]), cls = ph.k === 'base' ? 'fl-seg' : ph.k === 'res' || (ph.k === 'mix' && ph.chain[bi]) ? 'fl-bim' : 'fl-lane';
           var id = 'fl-o' + pi + '-' + bi;
-          h += slot(r, cls, id) + label(r, name, ph.small ? (L.hz ? 13 : 9) : L.fs, cls === 'fl-lane' ? 'fl-lane-t' : 'fl-in');
+          var shown = !L.hz && SHORT[name] ? SHORT[name] : name;
+          h += slot(r, cls, id) + label(r, shown, ph.small && L.hz ? 13 : L.fs, cls === 'fl-lane' ? 'fl-lane-t' : 'fl-in');
           bars.push({ id: id, r: r, t: ph.t });
           all.push(r); if (!ph.chain || ph.chain[bi]) cur.push(r);
         });
@@ -1244,8 +1247,9 @@
         h += '<text class="fl-t" x="0" y="' + L.t1 + '" style="font-size:' + L.tf + 'px">Proceso tradicional</text><text class="fl-s" x="0" y="' + L.s1 + '" style="font-size:' + L.sf + 'px">Una tarea tras otra</text>';
         h += '<text class="fl-t" x="0" y="' + L.t2 + '" style="font-size:' + L.tf + 'px">Método ALAS</text><text class="fl-s" x="0" y="' + L.s2 + '" style="font-size:' + L.sf + 'px">En paralelo sobre el modelo BIM</text>';
       } else {
-        h += '<text class="fl-t" x="' + L.c0 + '" y="10" style="font-size:' + L.tf + 'px">Tradicional</text><text class="fl-s" x="' + L.c0 + '" y="27" style="font-size:' + L.sf + 'px">Una tarea</text><text class="fl-s" x="' + L.c0 + '" y="38" style="font-size:' + L.sf + 'px">tras otra</text>';
-        h += '<text class="fl-t" x="' + L.l0 + '" y="10" style="font-size:' + L.tf + 'px">Método ALAS</text><text class="fl-s" x="' + L.l0 + '" y="27" style="font-size:' + L.sf + 'px">En paralelo sobre el modelo BIM</text>';
+        // phone legend: one line for the traditional run, two for the ALAS method
+        h += '<rect class="fl-seg" x="' + L.c0 + '" y="4" width="10" height="10" rx="2"/><text class="fl-s" x="' + (L.c0 + 17) + '" y="13" style="font-size:' + L.sf + 'px">' + 'Tradicional' + ' · ' + 'Una tarea tras otra' + '</text>';
+        h += '<rect class="fl-lane" x="' + L.c0 + '" y="24" width="10" height="10" rx="2"/><text class="fl-s" x="' + (L.c0 + 17) + '" y="33" style="font-size:' + L.sf + 'px">' + 'Método ALAS' + '</text><text class="fl-s" x="' + (L.c0 + 17) + '" y="50" style="font-size:' + L.sf + 'px">' + 'En paralelo sobre el modelo BIM' + '</text>';
       }
       // deliveries, guides and the time won
       var e1, e2, g1, g2, brk, PLANE = 'M21 3.5 L3 10.5 L10 13.5 L13.5 21 Z M21 3.5 L10 13.5';
@@ -1261,7 +1265,7 @@
         e1 = [mx, yb1]; e2 = [cx2, yb2];
         g1 = [mx + er + 4, yb1, bx - 2, yb1]; g2 = [cx2 + er + 4, yb2, bx - 2, yb2];
         var ym = (yb1 + yb2) / 2, rr = 8, dd = -12;
-        brk = '<path class="fl-brk" d="M' + bx + ',' + yb1 + ' Q' + (bx + dd / 2) + ',' + yb1 + ' ' + (bx + dd / 2) + ',' + (yb1 + rr) + ' V' + (ym - rr) + ' Q' + (bx + dd / 2) + ',' + ym + ' ' + (bx + dd) + ',' + ym + ' Q' + (bx + dd / 2) + ',' + ym + ' ' + (bx + dd / 2) + ',' + (ym + rr) + ' V' + (yb2 - rr) + ' Q' + (bx + dd / 2) + ',' + yb2 + ' ' + bx + ',' + yb2 + '"/><text class="fl-gain" x="' + (bx + dd - 8) + '" y="' + ym + '" text-anchor="end" style="font-size:12.5px;text-anchor:end">Tiempo ganado</text>';
+        brk = '<path class="fl-brk" d="M' + bx + ',' + yb1 + ' Q' + (bx + dd / 2) + ',' + yb1 + ' ' + (bx + dd / 2) + ',' + (yb1 + rr) + ' V' + (ym - rr) + ' Q' + (bx + dd / 2) + ',' + ym + ' ' + (bx + dd) + ',' + ym + ' Q' + (bx + dd / 2) + ',' + ym + ' ' + (bx + dd / 2) + ',' + (ym + rr) + ' V' + (yb2 - rr) + ' Q' + (bx + dd / 2) + ',' + yb2 + ' ' + bx + ',' + yb2 + '"/><text class="fl-gain" x="' + (bx + dd - 8) + '" y="' + ym + '" text-anchor="end" style="font-size:14.5px;text-anchor:end">Tiempo ganado</text>';
       }
       h += endNode('fl-e1', e1, true) + endNode('fl-e2', e2, false);
       h += '<line class="fl-guide" id="fl-g1" x1="' + g1[0] + '" y1="' + g1[1] + '" x2="' + g1[2] + '" y2="' + g1[3] + '" style="opacity:0"/>';
@@ -1328,7 +1332,7 @@
     var TOTAL = 100, SAVED = 0; METH.forEach(function (m) { Object.keys(m[1]).forEach(function (k) { SAVED += m[1][k]; }); });
     var LAY = {
       wide: { w: 1100, h: 424, hz: true, x0: 340, u: 26, ut: 4.16, y0: 30, pitch: 38, bh: 18, fs: 14, vf: 12, ir: 13, totY: 388, tbh: 22, lgX: 850 },
-      narrow: { w: 360, h: 448, hz: false, x0: 26, u: 18, ut: 2.9, y0: 60, pitch: 34, bh: 11, fs: 11, vf: 9.5, ir: 8, totY: 376, tbh: 14 }
+      narrow: { w: 360, h: 500, hz: false, x0: 26, u: 17.5, ut: 2.75, y0: 66, pitch: 36, bh: 11, fs: 14.6, vf: 14, ir: 8, totY: 408, tbh: 16 }
     };
     var size = '', L, n, el = {}, t0 = null;
     var T0 = 900, STEP = 1000, CUT = 650, END = T0 + (METH.length - 1) * STEP + CUT, CYC = 12600;
@@ -1353,7 +1357,7 @@
       h += '<rect class="w-slot" x="' + L.x0 + '" y="' + tby + '" width="' + TOTAL * L.ut + '" height="' + L.tbh + '" rx="3"/>';
       h += '<rect class="w-cut on" id="w-ts" x="0" y="' + tby + '" width="0" height="' + L.tbh + '" rx="3"/>';
       h += '<rect class="w-bar" id="w-tb" x="' + L.x0 + '" y="' + tby + '" width="0" height="' + L.tbh + '" rx="3"/>';
-      h += '<text class="w-sv" id="w-sv" x="0" y="' + (tby + L.tbh / 2 + 1) + '" text-anchor="middle" style="font-size:' + (n ? 9.5 : 13) + 'px;opacity:0"></text>';
+      h += '<text class="w-sv" id="w-sv" x="0" y="' + (tby + L.tbh / 2 + 1) + '" text-anchor="middle" style="font-size:' + (n ? 14 : 13) + 'px;opacity:0"></text>';
       h += '<text class="w-val" id="w-tv" x="' + (L.x0 + TOTAL * L.ut + 8) + '" y="' + (tby + L.tbh / 2 + 1) + '" style="font-size:' + (L.vf + 1) + 'px;opacity:0">100 h</text>';
       if (L.hz) {
         h += '<text class="w-kick" x="' + L.lgX + '" y="22" style="font-size:12px">MÉTODOS ALAS</text>';
@@ -1361,9 +1365,10 @@
         h += '<text class="w-kick" id="w-ok" x="' + L.lgX + '" y="262" style="font-size:12px;opacity:0">RESULTADO</text>';
         OUT.forEach(function (o, j) { var y = 290 + j * 29; h += '<g class="w-out" id="w-o' + j + '" style="opacity:0"><circle cx="' + (L.lgX + 6) + '" cy="' + y + '" r="5"/><text x="' + (L.lgX + 20) + '" y="' + y + '" style="font-size:15px">' + o + '</text></g>'; });
       } else {
-        h += '<text class="w-kick" id="w-step" x="' + L.x0 + '" y="10" style="font-size:9px">MÉTODO ALAS</text><text class="w-met" id="w-name" x="' + L.x0 + '" y="30" style="font-size:15px"></text>';
-        var cw = (L.w - L.x0 - 18) / 4;
-        OUTS.forEach(function (o, j) { var x = L.x0 + j * (cw + 6); h += '<g class="w-out w-chip" id="w-o' + j + '" style="opacity:0"><rect x="' + x + '" y="' + (L.h - 26) + '" width="' + cw + '" height="22" rx="11"/><text x="' + (x + cw / 2) + '" y="' + (L.h - 14) + '" text-anchor="middle" style="font-size:9.6px">' + o + '</text></g>'; });
+        h += '<text class="w-kick" id="w-step" x="' + L.x0 + '" y="13" style="font-size:14px">MÉTODO ALAS</text><text class="w-met" id="w-name" x="' + L.x0 + '" y="36" style="font-size:16px"></text>';
+        // the four results as chips, two per row, so their words stay legible on a phone
+        var cw = (L.w - L.x0 - 8) / 2;
+        OUTS.forEach(function (o, j) { var x = L.x0 + (j % 2) * (cw + 8), y = L.h - 58 + Math.floor(j / 2) * 30; h += '<g class="w-out w-chip" id="w-o' + j + '" style="opacity:0"><rect x="' + x + '" y="' + y + '" width="' + cw + '" height="24" rx="12"/><text x="' + (x + cw / 2) + '" y="' + (y + 13) + '" text-anchor="middle" style="font-size:14px">' + o + '</text></g>'; });
       }
       fig.innerHTML = h + '</svg>';
       el = {}; fig.querySelectorAll('[id^="w-"]').forEach(function (e) { el[e.id] = e; });
@@ -1395,7 +1400,7 @@
       el['w-tv'].style.opacity = String(all ? 1 : clamp01((tt - 900) / 400));
       el['w-tv'].textContent = Math.round(left) + ' h';
       // what has been saved so far, written inside the blue part once it is wide enough
-      var sw = savedNow * L.ut; el['w-sv'].setAttribute('x', (L.x0 + left * L.ut + sw / 2).toFixed(1)); el['w-sv'].textContent = '−' + Math.round(savedNow) + ' h ahorradas'; el['w-sv'].style.opacity = sw > (n ? 78 : 120) ? '1' : '0';
+      var sw = savedNow * L.ut; el['w-sv'].setAttribute('x', (L.x0 + left * L.ut + sw / 2).toFixed(1)); var svOn = sw > (n ? 78 : 120); el['w-sv'].textContent = '−' + (svOn ? Math.round(savedNow) : SAVED) + ' h ahorradas'; el['w-sv'].style.opacity = svOn ? '1' : '0';
       METH.forEach(function (m, j) { var lg = el['w-l' + j]; if (!lg) return; lg.style.opacity = all ? '1' : j === cur ? '1' : prog[j] >= 1 ? '.7' : '.35'; });
       if (el['w-name']) { el['w-name'].textContent = all || cur < 0 ? (fin > 0 ? 'Todos los métodos: −' + SAVED + ' h' : '') : METH[cur][0]; el['w-step'].textContent = all || cur < 0 ? 'MÉTODOS ALAS' : 'MÉTODO ALAS ' + (cur + 1) + '/' + METH.length; }
       if (el['w-ok']) el['w-ok'].style.opacity = String(fin);
@@ -1426,7 +1431,7 @@
       wide: { w: 1100, h: 452, fs: 20, df: 22, r: 78, br: 27, ics: 1.8, kf: 12, hf: 24,
         hd: { studio: [40, 18, 'start'], space: [1060, 18, 'end'] },
         studio: { c: [440, 254], mx: 298, side: -1, ys: [114, 207, 300, 393] }, space: { c: [660, 254], mx: 802, side: 1, ys: [114, 207, 300, 393] } },
-      narrow: { w: 360, h: 452, fs: 13.5, df: 13, r: 46, br: 17, ics: 1.3, kf: 8.6, hf: 15,
+      narrow: { w: 360, h: 452, fs: 14, df: 14.5, r: 46, br: 17, ics: 1.3, kf: 14, hf: 16,
         hd: { studio: [124, 8, 'start'], space: [124, 242, 'start'] },
         studio: { c: [56, 134], mx: 142, side: 1, ys: [70, 112, 154, 196] }, space: { c: [56, 366], mx: 142, side: 1, ys: [304, 346, 388, 430] } }
     };

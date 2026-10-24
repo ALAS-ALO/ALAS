@@ -30,8 +30,9 @@ export const POST: APIRoute = async ({ request }) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json(400, { ok: false, error: 'email' });
   const nombre = str(d.Nombre, 200) || email;
   const telefono = str(d['Teléfono'], 40);
-  const rama = RAMAS.includes(String(d.Rama)) ? String(d.Rama) : 'Ambas';
-  const tipo = TIPOS.includes(String(d.Tipo)) ? String(d.Tipo) : 'Particular';
+  // branch and client type are optional: a value outside the CRM's options is left out instead of failing
+  const rama = RAMAS.includes(String(d.Rama)) ? String(d.Rama) : '';
+  const tipo = TIPOS.includes(String(d.Tipo)) ? String(d.Tipo) : '';
   const mensaje = str(d.Notas, 5000);
   const idioma = IDIOMAS[str(d.idioma, 5)] ?? 'español';
 
@@ -41,13 +42,13 @@ export const POST: APIRoute = async ({ request }) => {
   const properties: Record<string, unknown> = {
     Nombre: { title: text(nombre) },
     Email: { email },
-    Rama: { select: { name: rama } },
-    Tipo: { select: { name: tipo } },
     'Fuente del lead': { select: { name: 'Web' } },
     'Estado pipeline': { select: { name: 'Lead' } },
     Notas: { rich_text: text(mensaje.slice(0, 1990)) },
   };
   if (telefono) properties['Teléfono'] = { phone_number: telefono };
+  if (rama) properties.Rama = { select: { name: rama } };
+  if (tipo) properties.Tipo = { select: { name: tipo } };
 
   const children = [
     { object: 'block', type: 'paragraph', paragraph: { rich_text: text(`Formulario web (${idioma}) · ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`) } },
