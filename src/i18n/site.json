@@ -1,9 +1,9 @@
 {
- "_note": "Datos del titular. Sustituye los marcadores entre corchetes por los datos reales; se aplican a toda la web en los tres idiomas.",
- "CORREO": "[CORREO]",
+ "_note": "Datos del titular. CORREO y COLEGIADO vacíos = pendientes: la web usa el formulario de contacto y «en trámite» hasta que se rellenen.",
+ "CORREO": "",
  "TITULAR": "Adrián López Otero",
- "NIF": "[NIF]",
- "DOMICILIO": "[DOMICILIO]",
- "COLEGIADO": "[Nº COLEGIADO]",
+ "NIF": "53821811V",
+ "DOMICILIO": "Calle Martín Echegaray, 28, Vigo (Pontevedra)",
+ "COLEGIADO": "",
  "ACTUALIZADO": "24/10/2026"
 }

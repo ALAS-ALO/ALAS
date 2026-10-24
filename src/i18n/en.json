@@ -311,14 +311,14 @@
  "El equipo valida cada documento": "The team validates every document",
  "Flujo de un encargo automatizado: el cliente rellena el formulario de la web y las automatizaciones crean el proyecto en la gestión interna. La gestión interna activa los agentes automatizados; con sus datos se desarrolla el modelo BIM, el gemelo digital del edificio, que se itera con IA. Del modelo sale la documentación y los sistemas, que vuelven a la gestión interna para su revisión. Después empieza la construcción, sincronizada con el gemelo digital, se tramita ante la Administración y la respuesta vuelve a la gestión interna. El proyecto se cierra y el cierre vuelve a la gestión interna.": "Automated commission workflow: the client fills in the website form and the automations create the project in internal management. Internal management triggers the automated agents; with their data the BIM model, the building's digital twin, is developed and iterated with AI. Documentation and systems come out of the model and return to internal management for review. Then construction begins, synchronised with the digital twin, permits are handled with the authorities and the response returns to internal management. The project is closed and the closure returns to internal management.",
  "Equipo descentralizado": "Distributed team",
- "Responsable: {{TITULAR}}. Finalidad: responder a tu solicitud y, si lo pides, prepararte una propuesta. Base legal: aplicación de medidas precontractuales a petición tuya. Destinatarios: nuestros proveedores de alojamiento y gestión (Cloudflare y Notion); no cedemos tus datos a terceros salvo obligación legal. Derechos: acceso, rectificación, supresión, oposición, limitación y portabilidad, escribiendo a {{CORREO}}.": "Controller: {{TITULAR}}. Purpose: to answer your request and, if you ask, to prepare a proposal. Legal basis: steps taken at your request before entering into a contract. Recipients: our hosting and management providers (Cloudflare and Notion); we do not share your data with third parties unless required by law. Rights: access, rectification, erasure, objection, restriction and portability, by writing to {{CORREO}}.",
  "Política de privacidad": "Privacy policy",
  "Aviso legal": "Legal notice",
  "Privacidad": "Privacy",
  "Información legal": "Legal information",
- "No se ha podido enviar. Escríbenos directamente a {{CORREO}}.": "It could not be sent. Please write to us directly at {{CORREO}}.",
  "ALAS · Studio y Space": "ALAS · Studio and Space",
  "Energía": "Energy",
  "Estructura": "Structure",
- "Mediciones": "Quantities"
+ "Mediciones": "Quantities",
+ "Responsable: {{TITULAR}}. Finalidad: responder a tu solicitud y, si lo pides, prepararte una propuesta. Base legal: aplicación de medidas precontractuales a petición tuya. Destinatarios: nuestros proveedores de alojamiento y gestión (Cloudflare y Notion); no cedemos tus datos a terceros salvo obligación legal. Derechos: acceso, rectificación, supresión, oposición, limitación y portabilidad, escribiendo {{CONTACTO}}.": "Controller: {{TITULAR}}. Purpose: to answer your request and, if you ask, to prepare a proposal. Legal basis: steps taken at your request before entering into a contract. Recipients: our hosting and management providers (Cloudflare and Notion); we do not share your data with third parties unless required by law. Rights: access, rectification, erasure, objection, restriction and portability, by writing {{CONTACTO}}.",
+ "No se ha podido enviar. {{FALLO}}": "It could not be sent. {{FALLO}}"
 }

@@ -3,7 +3,14 @@
 import SITE from './site.json';
 
 const S = SITE;
-const mail = (m) => (m.includes('@') ? `<a href="mailto:${m}">${m}</a>` : m);
+const HOME = { es: '/', en: '/en/', gl: '/gl/' };
+const FORM = { es: 'Formulario de contacto de esta web', en: 'Contact form on this website', gl: 'Formulario de contacto desta web' };
+const VIA = { es: 'a través del formulario de contacto de esta web', en: 'through the contact form on this website', gl: 'a través do formulario de contacto desta web' };
+const PENDING = { es: 'En trámite', en: 'Pending', gl: 'En trámite' };
+// the e-mail address, or the contact form while there is no address yet
+const mail = (m, l) => (m && m.includes('@') ? `<a href="mailto:${m}">${m}</a>` : `<a href="${HOME[l]}#contacto">${FORM[l]}</a>`);
+const writeTo = (m, l) => (m && m.includes('@') ? `${l === 'en' ? 'to' : 'a'} <a href="mailto:${m}">${m}</a>` : `<a href="${HOME[l]}#contacto">${VIA[l]}</a>`);
+const member = (n, l) => n || PENDING[l];
 
 export const LEGAL = {
   es: {
@@ -17,11 +24,11 @@ export const LEGAL = {
           <div><dt>Nombre comercial</dt><dd>ALAS (ALAS Studio y ALAS Space)</dd></div>
           <div><dt>NIF</dt><dd>${S.NIF}</dd></div>
           <div><dt>Domicilio</dt><dd>${S.DOMICILIO}</dd></div>
-          <div><dt>Correo electrónico</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
+          <div><dt>Contacto</dt><dd>${mail(S.CORREO, 'es')}</dd></div></dl>`],
         ['Datos profesionales', `<p>La arquitectura es una profesión regulada. Datos del profesional responsable:</p><dl>
           <div><dt>Título</dt><dd>Arquitecto. Grado por la Universidade da Coruña y máster habilitante por la Universidad de Granada (España)</dd></div>
           <div><dt>Colegio profesional</dt><dd>Colegio Oficial de Arquitectos de Galicia (COAG)</dd></div>
-          <div><dt>Número de colegiado</dt><dd>${S.COLEGIADO}</dd></div></dl>
+          <div><dt>Número de colegiado</dt><dd>${member(S.COLEGIADO, 'es')}</dd></div></dl>
           <p>Normas profesionales aplicables: Ley 38/1999, de Ordenación de la Edificación, los estatutos del COAG y el Código Deontológico de los Arquitectos, que pueden consultarse en la web del Consejo Superior de los Colegios de Arquitectos de España (cscae.com) y en la del COAG (coag.es).</p>`],
         ['Objeto del sitio', '<p>Este sitio informa sobre los servicios de arquitectura de ALAS Studio y de consultoría tecnológica de ALAS Space, y permite ponerse en contacto con el titular.</p>'],
         ['Propiedad intelectual e industrial', '<p>Los textos, diagramas, animaciones, diseño gráfico y logotipos de ALAS pertenecen al titular. No se permite reproducirlos, distribuirlos ni transformarlos sin autorización por escrito.</p><p>Los logotipos de otras empresas pertenecen a sus titulares y solo se muestran para identificar a empresas con las que hemos trabajado. Los vídeos de las fichas de servicios proceden de bancos de imágenes con licencia de uso.</p>'],
@@ -37,14 +44,14 @@ export const LEGAL = {
           <div><dt>Responsable</dt><dd>${S.TITULAR}</dd></div>
           <div><dt>NIF</dt><dd>${S.NIF}</dd></div>
           <div><dt>Domicilio</dt><dd>${S.DOMICILIO}</dd></div>
-          <div><dt>Contacto</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
+          <div><dt>Contacto</dt><dd>${mail(S.CORREO, 'es')}</dd></div></dl>`],
         ['Qué datos tratamos', '<p>Solo los que nos das en el formulario de contacto: la rama que te interesa, el tipo de cliente, tu nombre, tu correo, tu teléfono si lo indicas y el mensaje. Guardamos también el idioma de la página y la fecha del envío. No usamos herramientas de analítica ni recogemos datos de navegación.</p>'],
         ['Para qué los usamos', '<p>Para responder a tu solicitud, preparar una propuesta si nos la pides y gestionar la relación con nuestros clientes. No tomamos decisiones automatizadas ni elaboramos perfiles con tus datos.</p>'],
         ['Base legal', '<p>La aplicación de medidas precontractuales a petición tuya (art. 6.1.b del RGPD). Si llegamos a trabajar juntos, la ejecución del contrato (art. 6.1.b) y el cumplimiento de obligaciones legales, como las fiscales (art. 6.1.c).</p>'],
         ['Cuánto tiempo los conservamos', '<p>Mientras atendemos tu solicitud. Si no llegamos a colaborar, los suprimimos como máximo doce meses después del último contacto. Si hay encargo, los conservamos durante la relación y, después, durante los plazos que exigen la normativa fiscal y la de responsabilidad profesional.</p>'],
         ['Quién más accede a ellos', '<p>No cedemos tus datos a terceros, salvo obligación legal. Para prestar el servicio usamos dos proveedores que actúan como encargados del tratamiento: Cloudflare, Inc. (alojamiento de la web y envío del formulario) y Notion Labs, Inc. (herramienta de gestión de clientes).</p>'],
         ['Transferencias internacionales', '<p>Ambos proveedores tienen sede en Estados Unidos. Las transferencias se amparan en el Marco de Privacidad de Datos UE-EE. UU. o, en su defecto, en las cláusulas contractuales tipo aprobadas por la Comisión Europea.</p>'],
-        ['Tus derechos', `<p>Puedes pedir el acceso, la rectificación o la supresión de tus datos, oponerte a su tratamiento, solicitar su limitación o su portabilidad escribiendo a ${mail(S.CORREO)}. Si consideras que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>`],
+        ['Tus derechos', `<p>Puedes pedir el acceso, la rectificación o la supresión de tus datos, oponerte a su tratamiento, solicitar su limitación o su portabilidad escribiendo ${writeTo(S.CORREO, 'es')}. Si consideras que no hemos atendido bien tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>`],
         ['Seguridad', '<p>La web funciona con conexión cifrada (HTTPS) y el acceso a los datos está limitado a quien los necesita para atender tu solicitud.</p>'],
       ],
     },
@@ -71,11 +78,11 @@ export const LEGAL = {
           <div><dt>Trade name</dt><dd>ALAS (ALAS Studio and ALAS Space)</dd></div>
           <div><dt>Tax ID (NIF)</dt><dd>${S.NIF}</dd></div>
           <div><dt>Address</dt><dd>${S.DOMICILIO}</dd></div>
-          <div><dt>Email</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
+          <div><dt>Contact</dt><dd>${mail(S.CORREO, 'en')}</dd></div></dl>`],
         ['Professional details', `<p>Architecture is a regulated profession in Spain. Details of the professional in charge:</p><dl>
           <div><dt>Qualification</dt><dd>Architect. Degree from the University of A Coruña and qualifying master's degree from the University of Granada (Spain)</dd></div>
           <div><dt>Professional association</dt><dd>Official Association of Architects of Galicia (COAG)</dd></div>
-          <div><dt>Membership number</dt><dd>${S.COLEGIADO}</dd></div></dl>
+          <div><dt>Membership number</dt><dd>${member(S.COLEGIADO, 'en')}</dd></div></dl>
           <p>Applicable professional rules: Spanish Law 38/1999 on Building Regulation, the statutes of COAG and the Code of Ethics for Architects, available on the website of the Spanish Council of Architects' Associations (cscae.com) and on that of COAG (coag.es).</p>`],
         ['Purpose of the site', '<p>This site describes the architecture services of ALAS Studio and the technology consultancy services of ALAS Space, and lets you get in touch with the owner.</p>'],
         ['Intellectual and industrial property', '<p>The texts, diagrams, animations, graphic design and logos of ALAS belong to the owner. They may not be reproduced, distributed or transformed without written permission.</p><p>Other companies\' logos belong to their owners and are shown only to identify companies we have worked with. The videos on the service cards come from stock libraries under a licence of use.</p>'],
@@ -91,14 +98,14 @@ export const LEGAL = {
           <div><dt>Controller</dt><dd>${S.TITULAR}</dd></div>
           <div><dt>Tax ID (NIF)</dt><dd>${S.NIF}</dd></div>
           <div><dt>Address</dt><dd>${S.DOMICILIO}</dd></div>
-          <div><dt>Contact</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
+          <div><dt>Contact</dt><dd>${mail(S.CORREO, 'en')}</dd></div></dl>`],
         ['What data we process', '<p>Only what you give us in the contact form: the branch you are interested in, the type of client, your name, your email, your phone number if you provide it and your message. We also store the language of the page and the date it was sent. We do not use analytics tools or collect browsing data.</p>'],
         ['What we use it for', '<p>To answer your request, prepare a proposal if you ask for one and manage our relationship with clients. We do not make automated decisions or build profiles with your data.</p>'],
         ['Legal basis', '<p>Steps taken at your request before entering into a contract (art. 6.1.b GDPR). If we end up working together, performance of the contract (art. 6.1.b) and compliance with legal obligations such as tax obligations (art. 6.1.c).</p>'],
         ['How long we keep it', '<p>While we deal with your request. If we do not end up working together, we delete it no later than twelve months after the last contact. If there is a commission, we keep it for the duration of the relationship and then for the periods required by tax and professional liability rules.</p>'],
         ['Who else has access', '<p>We do not share your data with third parties unless required by law. To provide the service we use two providers acting as processors: Cloudflare, Inc. (website hosting and form delivery) and Notion Labs, Inc. (client management tool).</p>'],
         ['International transfers', '<p>Both providers are based in the United States. Transfers are covered by the EU-US Data Privacy Framework or, failing that, by the standard contractual clauses approved by the European Commission.</p>'],
-        ['Your rights', `<p>You can request access to, rectification or erasure of your data, object to its processing, or request its restriction or portability by writing to ${mail(S.CORREO)}. If you believe we have not handled your request properly, you can lodge a complaint with the Spanish Data Protection Agency (aepd.es).</p>`],
+        ['Your rights', `<p>You can request access to, rectification or erasure of your data, object to its processing, or request its restriction or portability by writing ${writeTo(S.CORREO, 'en')}. If you believe we have not handled your request properly, you can lodge a complaint with the Spanish Data Protection Agency (aepd.es).</p>`],
         ['Security', '<p>The website uses an encrypted connection (HTTPS), and access to the data is limited to those who need it to deal with your request.</p>'],
       ],
     },
@@ -125,11 +132,11 @@ export const LEGAL = {
           <div><dt>Nome comercial</dt><dd>ALAS (ALAS Studio e ALAS Space)</dd></div>
           <div><dt>NIF</dt><dd>${S.NIF}</dd></div>
           <div><dt>Domicilio</dt><dd>${S.DOMICILIO}</dd></div>
-          <div><dt>Correo electrónico</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
+          <div><dt>Contacto</dt><dd>${mail(S.CORREO, 'gl')}</dd></div></dl>`],
         ['Datos profesionais', `<p>A arquitectura é unha profesión regulada. Datos do profesional responsable:</p><dl>
           <div><dt>Título</dt><dd>Arquitecto. Grao pola Universidade da Coruña e mestrado habilitante pola Universidade de Granada (España)</dd></div>
           <div><dt>Colexio profesional</dt><dd>Colexio Oficial de Arquitectos de Galicia (COAG)</dd></div>
-          <div><dt>Número de colexiado</dt><dd>${S.COLEGIADO}</dd></div></dl>
+          <div><dt>Número de colexiado</dt><dd>${member(S.COLEGIADO, 'gl')}</dd></div></dl>
           <p>Normas profesionais aplicables: Lei 38/1999, de Ordenación da Edificación, os estatutos do COAG e o Código Deontolóxico dos Arquitectos, que se poden consultar na web do Consello Superior dos Colexios de Arquitectos de España (cscae.com) e na do COAG (coag.es).</p>`],
         ['Obxecto do sitio', '<p>Este sitio informa sobre os servizos de arquitectura de ALAS Studio e de consultoría tecnolóxica de ALAS Space, e permite poñerse en contacto co titular.</p>'],
         ['Propiedade intelectual e industrial', '<p>Os textos, diagramas, animacións, deseño gráfico e logotipos de ALAS pertencen ao titular. Non se permite reproducilos, distribuílos nin transformalos sen autorización por escrito.</p><p>Os logotipos doutras empresas pertencen aos seus titulares e só se amosan para identificar empresas coas que traballamos. Os vídeos das fichas de servizos proceden de bancos de imaxes con licenza de uso.</p>'],
@@ -145,14 +152,14 @@ export const LEGAL = {
           <div><dt>Responsable</dt><dd>${S.TITULAR}</dd></div>
           <div><dt>NIF</dt><dd>${S.NIF}</dd></div>
           <div><dt>Domicilio</dt><dd>${S.DOMICILIO}</dd></div>
-          <div><dt>Contacto</dt><dd>${mail(S.CORREO)}</dd></div></dl>`],
+          <div><dt>Contacto</dt><dd>${mail(S.CORREO, 'gl')}</dd></div></dl>`],
         ['Que datos tratamos', '<p>Só os que nos dás no formulario de contacto: a rama que che interesa, o tipo de cliente, o teu nome, o teu correo, o teu teléfono se o indicas e a mensaxe. Gardamos tamén o idioma da páxina e a data do envío. Non usamos ferramentas de analítica nin recollemos datos de navegación.</p>'],
         ['Para que os usamos', '<p>Para responder á túa solicitude, preparar unha proposta se nola pides e xestionar a relación cos nosos clientes. Non tomamos decisións automatizadas nin elaboramos perfís cos teus datos.</p>'],
         ['Base legal', '<p>A aplicación de medidas precontractuais por petición túa (art. 6.1.b do RXPD). Se chegamos a traballar xuntos, a execución do contrato (art. 6.1.b) e o cumprimento de obrigas legais, como as fiscais (art. 6.1.c).</p>'],
         ['Canto tempo os conservamos', '<p>Mentres atendemos a túa solicitude. Se non chegamos a colaborar, suprimímolos como máximo doce meses despois do último contacto. Se hai encargo, conservámolos durante a relación e, despois, durante os prazos que esixen a normativa fiscal e a de responsabilidade profesional.</p>'],
         ['Quen máis accede a eles', '<p>Non cedemos os teus datos a terceiros, salvo obriga legal. Para prestar o servizo usamos dous provedores que actúan como encargados do tratamento: Cloudflare, Inc. (aloxamento da web e envío do formulario) e Notion Labs, Inc. (ferramenta de xestión de clientes).</p>'],
         ['Transferencias internacionais', '<p>Ambos provedores teñen sede nos Estados Unidos. As transferencias ampáranse no Marco de Privacidade de Datos UE-EE. UU. ou, no seu defecto, nas cláusulas contractuais tipo aprobadas pola Comisión Europea.</p>'],
-        ['Os teus dereitos', `<p>Podes pedir o acceso, a rectificación ou a supresión dos teus datos, opoñerte ao seu tratamento, ou solicitar a súa limitación ou a súa portabilidade escribindo a ${mail(S.CORREO)}. Se consideras que non atendemos ben a túa solicitude, podes reclamar ante a Axencia Española de Protección de Datos (aepd.es).</p>`],
+        ['Os teus dereitos', `<p>Podes pedir o acceso, a rectificación ou a supresión dos teus datos, opoñerte ao seu tratamento, ou solicitar a súa limitación ou a súa portabilidade escribindo ${writeTo(S.CORREO, 'gl')}. Se consideras que non atendemos ben a túa solicitude, podes reclamar ante a Axencia Española de Protección de Datos (aepd.es).</p>`],
         ['Seguridade', '<p>A web funciona con conexión cifrada (HTTPS) e o acceso aos datos está limitado a quen os precisa para atender a túa solicitude.</p>'],
       ],
     },

@@ -11,7 +11,21 @@ const LANGS = { es: '/', en: '/en/', gl: '/gl/' };
 const SITE = JSON.parse(read('src/i18n/site.json'));
 const ROUTES = JSON.parse(read('src/i18n/routes.json'));
 // {{KEY}} tokens: the owner's details (site.json) and the per-language routes (routes.json)
-const fill = (src, lang) => src.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in ROUTES[lang] ? ROUTES[lang][k] : k in SITE ? SITE[k] : m));
+const HAS_MAIL = /@/.test(SITE.CORREO || '');
+const VIA = { es: 'a través del formulario de esta web', en: 'through the form on this website', gl: 'a través do formulario desta web' };
+const RETRY = { es: 'Vuelve a intentarlo en unos minutos.', en: 'Please try again in a few minutes.', gl: 'Volve tentalo nuns minutos.' };
+const WRITE = { es: 'Escríbenos directamente a', en: 'Please write to us directly at', gl: 'Escríbenos directamente a' };
+const TOKENS = (lang) => ({
+  ...SITE,
+  CONTACTO: HAS_MAIL ? (lang === 'en' ? 'to ' : 'a ') + SITE.CORREO : VIA[lang],
+  FALLO: HAS_MAIL ? `${WRITE[lang]} ${SITE.CORREO}.` : RETRY[lang],
+});
+const fill = (src, lang) => {
+  const T = TOKENS(lang);
+  // without an address yet, the visible e-mail links are left out
+  if (!HAS_MAIL) src = src.replace(/\s*<p class="contact-mail">[\s\S]*?<\/p>/, '').replace(/\s*<a class="proto foot-mail"[^>]*>[^<]*<\/a>/, '');
+  return src.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in ROUTES[lang] ? ROUTES[lang][k] : k in T ? T[k] : m));
+};
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const attr = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
