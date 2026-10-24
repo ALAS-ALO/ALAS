@@ -1,36 +1,38 @@
 ---
 import '../styles/global.css';
 import meta from '../i18n/meta.json';
-interface Props { lang: 'es' | 'en' | 'gl'; }
-const { lang } = Astro.props;
+type Lang = 'es' | 'en' | 'gl';
+interface Props { lang: Lang; title?: string; description?: string; paths?: Record<Lang, string>; noindex?: boolean; }
+const { lang, title, description, paths: given, noindex } = Astro.props;
 const m = meta[lang];
-const paths = { es: '/', en: '/en/', gl: '/gl/' };
+const paths = given ?? { es: '/', en: '/en/', gl: '/gl/' };
 const site = Astro.site ?? new URL('https://alas.lopezoteroadrian.workers.dev');
 const url = (p: string) => new URL(p, site).href;
+const t = title ?? m.title, d = description ?? m.description;
 ---
 <!doctype html>
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>{m.title}</title>
-    <meta name="description" content={m.description} />
-    <link rel="canonical" href={url(paths[lang])} />
-    {Object.entries(paths).map(([l, p]) => <link rel="alternate" hreflang={l} href={url(p)} />)}
-    <link rel="alternate" hreflang="x-default" href={url('/')} />
+    <title>{t}</title>
+    <meta name="description" content={d} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={url(paths[lang])} />}
+    {!noindex && Object.entries(paths).map(([l, p]) => <link rel="alternate" hreflang={l} href={url(p)} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={url(paths.es)} />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ALAS" />
-    <meta property="og:title" content={m.title} />
-    <meta property="og:description" content={m.description} />
+    <meta property="og:title" content={t} />
+    <meta property="og:description" content={d} />
     <meta property="og:url" content={url(paths[lang])} />
     <meta property="og:image" content={url('/og.png')} />
     <meta property="og:locale" content={m.locale} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <slot />

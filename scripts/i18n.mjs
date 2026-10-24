@@ -8,6 +8,10 @@ const read = (p) => readFileSync(new URL(p, root), 'utf8');
 const html = read('src/content/home.html');
 const js = read('src/scripts/main.js');
 const LANGS = { es: '/', en: '/en/', gl: '/gl/' };
+const SITE = JSON.parse(read('src/i18n/site.json'));
+const ROUTES = JSON.parse(read('src/i18n/routes.json'));
+// {{KEY}} tokens: the owner's details (site.json) and the per-language routes (routes.json)
+const fill = (src, lang) => src.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in ROUTES[lang] ? ROUTES[lang][k] : k in SITE ? SITE[k] : m));
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const attr = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
@@ -40,8 +44,8 @@ for (const [lang, href] of Object.entries(LANGS)) {
   const sorted = Object.fromEntries(Object.entries(dict).sort((a, b) => b[0].length - a[0].length));
   let page = translateHtml(html, sorted)
     .replace(`hreflang="${lang}" lang="${lang}"`, `hreflang="${lang}" lang="${lang}" aria-current="page"`);
-  writeFileSync(new URL(`src/generated/home.${lang}.html`, root), page);
-  writeFileSync(new URL(`src/generated/main.${lang}.js`, root), translateJs(js, sorted));
+  writeFileSync(new URL(`src/generated/home.${lang}.html`, root), fill(page, lang));
+  writeFileSync(new URL(`src/generated/main.${lang}.js`, root), fill(translateJs(js, sorted), lang));
   void href;
 }
 console.log('i18n: generated es, en, gl');

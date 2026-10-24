@@ -1602,7 +1602,7 @@
       note.textContent = 'Enviando…';
       fetch('/api/contacto', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(lead) })
         .then(function (r) { if (!r.ok) throw new Error(r.status); note.textContent = 'Gracias. Te respondemos en dos días laborables.'; f.reset(); })
-        .catch(function () { note.textContent = 'No se ha podido enviar. Escríbenos directamente por correo.'; });
+        .catch(function () { note.textContent = 'No se ha podido enviar. Escríbenos directamente a {{CORREO}}.'; });
     }
   });
 })();

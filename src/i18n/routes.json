@@ -1,0 +1,5 @@
+{
+ "es": { "home": "/", "notice": "/aviso-legal/", "privacy": "/privacidad/", "cookies": "/cookies/" },
+ "en": { "home": "/en/", "notice": "/en/legal-notice/", "privacy": "/en/privacy/", "cookies": "/en/cookies/" },
+ "gl": { "home": "/gl/", "notice": "/gl/aviso-legal/", "privacy": "/gl/privacidade/", "cookies": "/gl/cookies/" }
+}
