@@ -1294,7 +1294,7 @@
           var ln = ph.lanes ? ph.lanes[bi] : [bi * 4 / m, (bi + 1) * 4 / m], r = box(ph.t[0], ph.t[1], ln[0], ln[1]), cls = ph.k === 'base' ? 'fl-seg' : ph.k === 'res' || (ph.k === 'mix' && ph.chain[bi]) ? 'fl-bim' : 'fl-lane';
           var id = 'fl-o' + pi + '-' + bi;
           var shown = !L.hz && SHORT[name] ? SHORT[name] : name;
-          h += slot(r, cls, id) + label(r, shown, ph.small && L.hz ? 13 : L.fs, cls === 'fl-lane' ? 'fl-lane-t' : 'fl-in');
+          h += slot(r, cls, id) + label(r, shown, ph.small && L.hz ? 13 : !L.hz && m === 1 ? L.fs + 1 : L.fs, cls === 'fl-lane' ? 'fl-lane-t' : 'fl-in');
           bars.push({ id: id, r: r, t: ph.t });
           all.push(r); if (!ph.chain || ph.chain[bi]) cur.push(r);
         });

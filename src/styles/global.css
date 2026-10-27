@@ -750,3 +750,4 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .afl-iso path { fill: none; stroke: #fff; stroke-width: 30; stroke-linecap: round; stroke-linejoin: round; }
 .afl-word { width: 140px; height: auto; }
 .afl-word path { fill: none; stroke: var(--ink); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; }
+.proj-steps button[aria-pressed="true"] span { color: var(--ink); }
