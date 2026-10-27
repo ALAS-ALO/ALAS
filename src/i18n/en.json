@@ -328,13 +328,10 @@
  "Proyecto anterior": "Previous project",
  "Proyecto siguiente": "Next project",
  "Rehabilitación de una vivienda": "Renovation of a home",
- "Del estado actual al recorrido final. Levantamos el edificio existente, lo modelamos en BIM y te enseñamos la propuesta en renders y recorridos antes de empezar la obra.": "From the existing building to the final walkthrough. We survey the existing building, model it in BIM and show you the proposal in renders and walkthroughs before work starts.",
  "Encargo": "Commission",
  "Rehabilitación integral": "Full renovation",
  "Proceso": "Process",
- "Estado actual · Modelo BIM · Renders y recorrido": "Existing state · BIM model · Renders and walkthrough",
  "Resultado": "Result",
- "Proyecto listo para tramitar": "Project ready for permitting",
  "Estado actual": "Existing state",
  "Renders y recorrido": "Renders and walkthrough",
  "Proyecto de ejemplo. Vídeos provisionales.": "Example project. Provisional videos.",
@@ -343,5 +340,10 @@
  "El modelo sigue vivo durante la obra": "The model stays live during construction",
  "Respuesta y seguimiento": "Response and follow-up",
  "Cierre del ciclo": "Closing the cycle",
- "Herramientas": "Tools"
+ "Herramientas": "Tools",
+ "Obra": "Construction",
+ "Estado final": "Final result",
+ "Estado actual · Modelo BIM · Renders y recorrido · Obra · Estado final": "Existing state · BIM model · Renders and walkthrough · Construction · Final result",
+ "Del estado actual al edificio terminado. Levantamos lo existente, lo modelamos en BIM, te enseñamos la propuesta en renders y recorridos antes de empezar, seguimos la obra y documentamos el resultado.": "From the existing building to the finished one. We survey what is there, model it in BIM, show you the proposal in renders and walkthroughs before starting, follow the works on site and document the result.",
+ "Vivienda rehabilitada": "Renovated home"
 }

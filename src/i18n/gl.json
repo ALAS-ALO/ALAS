@@ -240,9 +240,6 @@
  "Proyecto anterior": "Proxecto anterior",
  "Proyecto siguiente": "Proxecto seguinte",
  "Rehabilitación de una vivienda": "Rehabilitación dunha vivenda",
- "Del estado actual al recorrido final. Levantamos el edificio existente, lo modelamos en BIM y te enseñamos la propuesta en renders y recorridos antes de empezar la obra.": "Do estado actual ao percorrido final. Levantamos o edificio existente, modelámolo en BIM e amosámosche a proposta en renders e percorridos antes de comezar a obra.",
- "Estado actual · Modelo BIM · Renders y recorrido": "Estado actual · Modelo BIM · Renders e percorrido",
- "Proyecto listo para tramitar": "Proxecto listo para tramitar",
  "Renders y recorrido": "Renders e percorrido",
  "Proyecto de ejemplo. Vídeos provisionales.": "Proxecto de exemplo. Vídeos provisionais.",
  "Revisión del equipo": "Revisión do equipo",
@@ -250,5 +247,8 @@
  "El modelo sigue vivo durante la obra": "O modelo segue vivo durante a obra",
  "Respuesta y seguimiento": "Resposta e seguimento",
  "Cierre del ciclo": "Peche do ciclo",
- "Herramientas": "Ferramentas"
+ "Herramientas": "Ferramentas",
+ "Estado actual · Modelo BIM · Renders y recorrido · Obra · Estado final": "Estado actual · Modelo BIM · Renders e percorrido · Obra · Estado final",
+ "Del estado actual al edificio terminado. Levantamos lo existente, lo modelamos en BIM, te enseñamos la propuesta en renders y recorridos antes de empezar, seguimos la obra y documentamos el resultado.": "Do estado actual ao edificio rematado. Levantamos o existente, modelámolo en BIM, amosámosche a proposta en renders e percorridos antes de comezar, seguimos a obra e documentamos o resultado.",
+ "Vivienda rehabilitada": "Vivenda rehabilitada"
 }

@@ -705,7 +705,7 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .proj-stage { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-md); overflow: hidden; background: var(--surface); border: 1px solid var(--line); }
 .proj-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .proj-tag { position: absolute; left: 16px; bottom: 14px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: rgba(19, 20, 22, .55); padding: 6px 10px; border-radius: var(--radius-pill); }
-.proj-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.proj-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
 .proj-steps button { width: 100%; min-height: 44px; display: flex; align-items: baseline; gap: 8px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: none; color: var(--muted); font: inherit; font-size: 15px; text-align: left; cursor: pointer; transition: border-color .3s, color .3s, background .3s; }
 .proj-steps button span { font-family: var(--font-mono); font-size: 12px; color: var(--accent-text); }
 .proj-steps button[aria-pressed="true"] { color: var(--ink); border-color: var(--accent); background: var(--soft); }
@@ -717,7 +717,7 @@ fieldset { border: 0; margin: 0; padding: 0; }
 @media (min-width: 900px) {
   .proj { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); align-items: start; }
   .proj-steps { grid-template-columns: 1fr; }
-  .proj-steps button { min-height: 64px; font-size: 16px; }
+  .proj-steps button { min-height: 0; padding-block: 14px; font-size: 16px; }
   .proj .tool-note { grid-column: 1 / -1; }
 }
 
