@@ -230,5 +230,19 @@
  "Estructura": "Estrutura",
  "Mediciones": "Medicións",
  "Responsable: {{TITULAR}}. Finalidad: responder a tu solicitud y, si lo pides, prepararte una propuesta. Base legal: aplicación de medidas precontractuales a petición tuya. Destinatarios: nuestros proveedores de alojamiento y gestión (Cloudflare y Notion); no cedemos tus datos a terceros salvo obligación legal. Derechos: acceso, rectificación, supresión, oposición, limitación y portabilidad, escribiendo {{CONTACTO}}.": "Responsable: {{TITULAR}}. Finalidade: responder á túa solicitude e, se o pides, prepararche unha proposta. Base legal: aplicación de medidas precontractuais por petición túa. Destinatarios: os nosos provedores de aloxamento e xestión (Cloudflare e Notion); non cedemos os teus datos a terceiros salvo obriga legal. Dereitos: acceso, rectificación, supresión, oposición, limitación e portabilidade, escribindo {{CONTACTO}}.",
- "No se ha podido enviar. {{FALLO}}": "Non se puido enviar. {{FALLO}}"
+ "No se ha podido enviar. {{FALLO}}": "Non se puido enviar. {{FALLO}}",
+ "Proyectos": "Proxectos",
+ "Proyectos · Space": "Proxectos · Space",
+ "Proyectos · Studio": "Proxectos · Studio",
+ "Así son nuestros proyectos.": "Así son os nosos proxectos.",
+ "Proyectos de Studio": "Proxectos de Studio",
+ "Rehabilitación de vivienda": "Rehabilitación de vivenda",
+ "Proyecto anterior": "Proxecto anterior",
+ "Proyecto siguiente": "Proxecto seguinte",
+ "Rehabilitación de una vivienda": "Rehabilitación dunha vivenda",
+ "Del estado actual al recorrido final. Levantamos el edificio existente, lo modelamos en BIM y te enseñamos la propuesta en renders y recorridos antes de empezar la obra.": "Do estado actual ao percorrido final. Levantamos o edificio existente, modelámolo en BIM e amosámosche a proposta en renders e percorridos antes de comezar a obra.",
+ "Estado actual · Modelo BIM · Renders y recorrido": "Estado actual · Modelo BIM · Renders e percorrido",
+ "Proyecto listo para tramitar": "Proxecto listo para tramitar",
+ "Renders y recorrido": "Renders e percorrido",
+ "Proyecto de ejemplo. Vídeos provisionales.": "Proxecto de exemplo. Vídeos provisionais."
 }

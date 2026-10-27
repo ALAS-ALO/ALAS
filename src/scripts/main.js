@@ -431,7 +431,7 @@
   var zones = [].slice.call(document.querySelectorAll('main > section, footer'));
   function headerBranch() {
     var y = top.getBoundingClientRect().bottom + 1, branch = 'studio', inSpace = false;
-    zones.forEach(function (z) { var r = z.getBoundingClientRect(); if (r.top <= y && r.bottom > y) { branch = z.getAttribute('data-branch') || 'studio'; if (z.id === 'space' || z.id === 'casos' || z.id === 'contacto') inSpace = true; } });
+    zones.forEach(function (z) { var r = z.getBoundingClientRect(); if (r.top <= y && r.bottom > y) { branch = z.getAttribute('data-branch') || 'studio'; if (z.id === 'space' || z.id === 'proyectos-space' || z.id === 'contacto') inSpace = true; } });
     if (zones[0].getBoundingClientRect().bottom > y) branch = 'studio';
     top.setAttribute('data-branch', branch);
     var active = inSpace || branch === 'space' ? 'space' : 'studio';
@@ -478,6 +478,26 @@
     else timer = setInterval(tick, 1100);
   });
 
+
+  /* ---------- Studio projects: one video in chapters (current state, BIM model, renders and walkthrough) ---------- */
+  document.querySelectorAll('[data-proj]').forEach(function (fig) {
+    var v = fig.querySelector('video'), btns = [].slice.call(fig.querySelectorAll('[data-clip]')), tag = fig.querySelector('.proj-tag'), cur = 0, seen = false;
+    function load(i, play) {
+      cur = i; var c = btns[i].getAttribute('data-clip');
+      btns.forEach(function (b, j) { b.setAttribute('aria-pressed', String(j === i)); });
+      tag.textContent = btns[i].textContent.replace(/^\d+/, '');
+      v.poster = '/media/' + c + '.jpg';
+      v.innerHTML = '<source src="/media/' + c + '.webm" type="video/webm"><source src="/media/' + c + '.mp4" type="video/mp4">';
+      v.load(); if (play && !reduce) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+    }
+    // each chapter plays once and hands over to the next, as the final single video will
+    v.addEventListener('ended', function () { load((cur + 1) % btns.length, true); });
+    btns.forEach(function (b, i) { b.addEventListener('click', function () { load(i, true); }); });
+    v.poster = '/media/' + btns[0].getAttribute('data-clip') + '.jpg'; tag.textContent = btns[0].textContent.replace(/^\d+/, '');
+    if (window.IntersectionObserver) new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting) { if (!seen) { seen = true; load(cur, true); } else if (!reduce) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } } else v.pause();
+    }, { threshold: .35 }).observe(fig);
+  });
   /* ---------- Space: an automated commission, from the web form to the closed project ---------- */
   (function () {
     var host = document.getElementById('autoflow'); if (!host) return;
@@ -1064,7 +1084,17 @@
   });
   
 
-  playIntro();
+  // Arriving at a section (a search result or a shared link such as /#space): no intro and no hero, straight to that section
+  var deepTarget = (function () { var id = decodeURIComponent(location.hash.slice(1)); return id && id !== 'inicio' ? document.getElementById(id) : null; })();
+  if (deepTarget) {
+    words.forEach(settle);
+    [pS, pP].forEach(function (p) { p.played = true; p.classList.remove('is-waiting'); });
+    STUDIO_T0 = SPACE_T0 = performance.now() - 1e5;
+    heroEl.classList.remove('is-landing'); top.classList.remove('logo-wait'); endIntro(); armed = true;
+    var goDeep = function () { window.scrollTo({ top: Math.max(0, deepTarget.getBoundingClientRect().top + window.scrollY - top.offsetHeight), behavior: 'instant' }); };
+    requestAnimationFrame(goDeep); window.addEventListener('load', goDeep);
+    try { localStorage.setItem('alas-visited', '1'); } catch (err) {}
+  } else playIntro();
 
   /* ---------- Who we are: Studio and Space, joined by ALAS, each with its clients; shared clients sit between them ---------- */
   (function () {

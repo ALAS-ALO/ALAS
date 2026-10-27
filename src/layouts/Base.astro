@@ -2,13 +2,24 @@
 import '../styles/global.css';
 import meta from '../i18n/meta.json';
 type Lang = 'es' | 'en' | 'gl';
-interface Props { lang: Lang; title?: string; description?: string; paths?: Record<Lang, string>; noindex?: boolean; }
-const { lang, title, description, paths: given, noindex } = Astro.props;
+interface Props { lang: Lang; title?: string; description?: string; paths?: Record<Lang, string>; noindex?: boolean; home?: boolean; }
+const { lang, title, description, paths: given, noindex, home } = Astro.props;
 const m = meta[lang];
 const paths = given ?? { es: '/', en: '/en/', gl: '/gl/' };
 const site = Astro.site ?? new URL('https://alas.lopezoteroadrian.workers.dev');
 const url = (p: string) => new URL(p, site).href;
 const t = title ?? m.title, d = description ?? m.description;
+// structured data for search engines: who is behind the site and what it is
+const ld = home ? JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'ProfessionalService', '@id': url('/#alas'), name: 'ALAS', alternateName: ['ALAS Studio', 'ALAS Space'], url: url(paths[lang]), logo: url('/apple-touch-icon.png'), image: url('/og.png'), description: d,
+      founder: { '@type': 'Person', name: 'Adrián López Otero', jobTitle: lang === 'en' ? 'Architect' : 'Arquitecto' },
+      address: { '@type': 'PostalAddress', addressLocality: 'Vigo', addressRegion: 'Pontevedra', addressCountry: 'ES' }, areaServed: { '@type': 'Country', name: 'España' },
+      knowsAbout: ['Arquitectura', 'BIM', 'Rehabilitación', 'Automatización', 'Inteligencia artificial aplicada a la arquitectura'] },
+    { '@type': 'WebSite', '@id': url('/#web'), url: url('/'), name: 'ALAS', inLanguage: lang, publisher: { '@id': url('/#alas') } },
+  ],
+}) : '';
 ---
 <!doctype html>
 <html lang={lang}>
@@ -32,6 +43,7 @@ const t = title ?? m.title, d = description ?? m.description;
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {ld && <script type="application/ld+json" set:html={ld} />}
     <link rel="preload" href="/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
