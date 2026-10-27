@@ -26,7 +26,7 @@
   ]);
   services(document.getElementById('space-services'), [
     { shape: 'square', label: 'Space · 01', title: 'Mentoring estratégico', media: 'Mentoring', video: '/media/space-mentoring.mp4', poster: '/media/space-mentoring.jpg', items: ['Optimización organizativa del estudio', 'Implementación BIM avanzada', 'Introducción aplicada a la inteligencia artificial', 'Diseño de sistemas internos personalizados', 'Creación de web e imagen corporativa'] },
-    { shape: 'circle', label: 'Space · 02', title: 'Agentes automatizados', media: 'Agentes', video: '/media/space-agentes.mp4', poster: '/media/space-agentes.jpg', items: ['Agente de control normativo', 'Agente de revisión BIM', 'Agente documental', 'Agente de análisis de viabilidad', 'Agente generador de memorias'] },
+    { shape: 'circle', label: 'Space · 02', title: 'Agentes inteligentes', media: 'Agentes', video: '/media/space-agentes.mp4', poster: '/media/space-agentes.jpg', items: ['Agente de control normativo', 'Agente de revisión BIM', 'Agente documental', 'Agente de análisis de viabilidad', 'Agente generador de memorias'] },
     { shape: 'triangle', label: 'Space · 03', title: 'Plantillas y sistemas', media: 'Sistemas', video: '/media/space-plantillas.mp4', poster: '/media/space-plantillas.jpg', items: ['Automatizaciones para Revit: rutinas Dynamo y complementos propios', 'Templates optimizados para Revit', 'Librerías de familias BIM', 'Sistemas de gestión documental', 'Entornos de proyecto preconfigurados'] },
     { shape: 'circle', label: 'Space · 04', title: 'Freelancing', media: 'Colaboración', video: '/media/space-freelancing.mp4', poster: '/media/space-freelancing.jpg', items: ['Colaboración con otros estudios de arquitectura', 'Modelado BIM para terceros', 'Documentación y planos de proyecto', 'Coordinación BIM externa', 'Refuerzo en entregas y concursos'] }
   ]);
@@ -519,7 +519,7 @@
       web: { ic: 'web', lab: 'Web', sub: 'Identidad visual ·|Funcionalidades ·|Mantenimiento' },
       form: { ic: 'form', lab: 'Formulario', sub: 'Automatizaciones ·|Integraciones API · MCP' },
       hub: { ic: 'hub', lab: 'Gestión interna', sub: 'CRM y proyectos', big: true },
-      agent: { ic: 'agent', lab: 'Agentes automatizados', sub: 'Informes preliminares ·|Análisis normativo ·|Propuestas de aproximación' },
+      agent: { ic: 'agent', lab: 'Agentes inteligentes', sub: 'Informes preliminares ·|Análisis normativo ·|Propuestas de aproximación' },
       bim: { ic: 'bim', lab: 'Modelo BIM', sub: 'Gemelo digital del edificio' },
       docs: { ic: 'docs', lab: 'Documentación y sistemas', sub: 'Estructura · MEP · Planimetría ·|Mediciones · Presupuestos ·|Memorias' },
       build: { ic: 'build', lab: 'Construcción', sub: 'Obra sobre el gemelo|digital vivo' },
@@ -1493,7 +1493,7 @@
   /* ---------- What we do: read left to right — Studio works with people, Space with companies, each with its four kinds of commission ---------- */
   (function () {
     var fig = document.getElementById('svc'); if (!fig) return;
-    var SV = { studio: ['Proyectos arquitectónicos', 'Servicios técnicos', 'Modelado y BIM', 'Visualización'], space: ['Mentoring estratégico', 'Agentes automatizados', 'Plantillas y sistemas', 'Freelancing'] };
+    var SV = { studio: ['Proyectos arquitectónicos', 'Servicios técnicos', 'Modelado y BIM', 'Visualización'], space: ['Mentoring estratégico', 'Agentes inteligentes', 'Plantillas y sistemas', 'Freelancing'] };
     // one line icon per service, on a 24 grid
     var SIC = { studio: [
         'M3.5 4 H20.5 V20 H3.5 Z M3.5 12 H10 V20 M14 4 V8.5 M14 13 H20.5 M10 8 A4 4 0 0 1 14 12',

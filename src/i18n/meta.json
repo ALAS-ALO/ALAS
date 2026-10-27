@@ -1,5 +1,5 @@
 {
- "es": { "title": "ALAS · Studio y Space", "description": "ALAS: un estudio de arquitectura (Studio) y una consultoría tecnológica para estudios y empresas del sector (Space). Proyectos, servicios técnicos, BIM, agentes automatizados y sistemas propios.", "locale": "es_ES" },
- "en": { "title": "ALAS · Studio and Space", "description": "ALAS: an architecture studio (Studio) and a technology consultancy for architecture practices and construction companies (Space). Projects, technical services, BIM, automated agents and in-house systems.", "locale": "en_GB" },
- "gl": { "title": "ALAS · Studio e Space", "description": "ALAS: un estudo de arquitectura (Studio) e unha consultora tecnolóxica para estudos e empresas do sector (Space). Proxectos, servizos técnicos, BIM, axentes automatizados e sistemas propios.", "locale": "gl_ES" }
+ "es": { "title": "ALAS · Studio y Space", "description": "ALAS: un estudio de arquitectura (Studio) y una consultoría tecnológica para estudios y empresas del sector (Space). Proyectos, servicios técnicos, BIM, agentes inteligentes y sistemas propios.", "locale": "es_ES" },
+ "en": { "title": "ALAS · Studio and Space", "description": "ALAS: an architecture studio (Studio) and a technology consultancy for architecture practices and construction companies (Space). Projects, technical services, BIM, intelligent agents and in-house systems.", "locale": "en_GB" },
+ "gl": { "title": "ALAS · Studio e Space", "description": "ALAS: un estudo de arquitectura (Studio) e unha consultora tecnolóxica para estudos e empresas do sector (Space). Proxectos, servizos técnicos, BIM, axentes intelixentes e sistemas propios.", "locale": "gl_ES" }
 }
