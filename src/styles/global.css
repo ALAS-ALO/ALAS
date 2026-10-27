@@ -720,3 +720,33 @@ fieldset { border: 0; margin: 0; padding: 0; }
   .proj-steps button { min-height: 64px; font-size: 16px; }
   .proj .tool-note { grid-column: 1 / -1; }
 }
+
+/* Automation flow on phones: a vertical line of steps */
+.afl { position: relative; padding: 4px 0; }
+.afl ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; position: relative; }
+.afl-rail { position: absolute; left: 21px; top: 26px; bottom: 26px; width: 2px; background: var(--line); transition: opacity .3s; }
+.afl-fill { position: absolute; left: 0; top: 0; width: 100%; background: var(--accent); }
+.afl-row { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; align-items: center; min-height: 52px; opacity: 1; }
+.afl-dot { position: relative; z-index: 1; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1.5px solid var(--line-strong); transition: background .4s, border-color .4s; }
+.afl-dot svg { width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .4s; }
+.afl-txt { display: grid; gap: 2px; min-width: 0; }
+.afl-txt b { font-weight: 500; font-size: 16px; line-height: 20px; color: var(--muted); transition: color .4s; }
+.afl-txt small { font-family: var(--font-mono); font-size: 12.5px; line-height: 17px; color: var(--muted); opacity: .75; }
+.afl-row.on .afl-dot { border-color: var(--accent); }
+.afl-row.on .afl-dot svg { stroke: var(--ink); }
+.afl-row.on .afl-txt b { color: var(--ink); }
+.afl-row.on .afl-txt small { opacity: 1; }
+.afl-hub.on .afl-dot { background: var(--accent); }
+.afl-hub.on .afl-dot svg { stroke: #0c0d0f; }
+.afl-loop .afl-txt b { color: var(--accent-text); }
+.afl-row.sync .afl-dot { animation: afl-sync 1.1s ease-in-out 3; }
+@keyframes afl-sync { 0%, 100% { background: var(--surface); border-color: var(--accent); } 45%, 55% { background: var(--studio-orange); border-color: var(--studio-orange); } }
+.afl-row.orange .afl-dot { background: var(--studio-orange); border-color: var(--studio-orange); }
+.afl-row.orange .afl-dot svg { stroke: #0c0d0f; }
+.afl-brand { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; opacity: 0; transition: opacity .6s; pointer-events: none; }
+.afl-brand.on { opacity: 1; }
+.afl-iso { width: 96px; height: 96px; overflow: visible; }
+.afl-iso .afl-disc { fill: var(--studio-orange); }
+.afl-iso path { fill: none; stroke: #fff; stroke-width: 30; stroke-linecap: round; stroke-linejoin: round; }
+.afl-word { width: 140px; height: auto; }
+.afl-word path { fill: none; stroke: var(--ink); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; }

@@ -623,6 +623,8 @@
     }
     function build() {
       var nm = fig.clientWidth >= 700 ? 'wide' : 'narrow'; if (nm === mode) return; mode = nm; L = LAY[nm];
+      if (nm === 'narrow') { buildList(); return; }
+      list = null;
       host.innerHTML = ''; el = {}; edges = []; shown = {}; lastStep = -2; finalOn = syncOn = false;
       svg = mk('svg', { viewBox: '0 0 ' + L.w + ' ' + L.h, 'aria-hidden': 'true' }, host);
       var defs = mk('defs', {}, svg);
@@ -668,7 +670,53 @@
       if (v && !reduce) ping(k);
     }
     function ease(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    // Phones: the same journey as a vertical line of steps, so every name and subtitle stays legible
+    var list = null, rows = [], railFill, brandEl, LICON = { loop: 'M20 12a8 8 0 1 1-2.34-5.66M20 4v4.5h-4.5', sync: 'M4 8h11l-3-3M20 16H9l3 3' };
+    var ROWS = [
+      { k: 'web' }, { k: 'form' }, { k: 'hub' }, { k: 'agent' }, { k: 'bim' },
+      { k: 'loop', lab: LOOP.lab, sub: LOOP.sub, ic: 'loop' },
+      { k: 'docs' }, { k: 'hub', sub: 'Revisión del equipo' }, { k: 'build' },
+      { k: 'sync', lab: 'Obra y gemelo digital', sub: 'El modelo sigue vivo durante la obra', ic: 'sync' },
+      { k: 'gov' }, { k: 'hub', sub: 'Respuesta y seguimiento' }, { k: 'end' }, { k: 'hub', sub: 'Cierre del ciclo', close: true }
+    ];
+    function iconSvg(d) { return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '"/></svg>'; }
+    function buildList() {
+      svg = null; host.innerHTML = ''; rows = [];
+      list = document.createElement('div'); list.className = 'afl';
+      var h = '<span class="afl-rail"><span class="afl-fill"></span></span><ol>';
+      ROWS.forEach(function (r) {
+        var n = NODES[r.k] || {}, lab = r.lab || n.lab, sub = (r.sub || n.sub || '').split('|').map(function (x) { return x.trim(); }).join(' '), d = r.ic ? LICON[r.ic] : ICON[n.ic];
+        h += '<li class="afl-row' + (r.k === 'hub' ? ' afl-hub' : '') + (r.k === 'end' ? ' afl-end' : '') + (r.k === 'sync' ? ' afl-sync' : '') + (r.k === 'loop' ? ' afl-loop' : '') + '"><span class="afl-dot">' + iconSvg(d) + '</span><span class="afl-txt"><b>' + lab + '</b><small>' + sub + '</small></span></li>';
+      });
+      h += '</ol><div class="afl-brand" aria-hidden="true"></div>';
+      list.innerHTML = h; host.appendChild(list);
+      rows = [].slice.call(list.querySelectorAll('.afl-row')); railFill = list.querySelector('.afl-fill'); brandEl = list.querySelector('.afl-brand');
+      var iso = document.querySelector('.top .logo-mono'), word = document.querySelector('.foot .logo');
+      if (iso && word) brandEl.innerHTML = '<svg class="afl-iso" viewBox="' + iso.getAttribute('viewBox') + '"><circle cx="304" cy="158" r="400" class="afl-disc"/>' + [].slice.call(iso.querySelectorAll('path:not(.disc)')).map(function (q) { return '<path d="' + q.getAttribute('d') + '"/>'; }).join('') + '</svg><svg class="afl-word" viewBox="' + word.getAttribute('viewBox') + '">' + [].slice.call(word.querySelectorAll('path')).map(function (q) { return '<path d="' + q.getAttribute('d') + '"/>'; }).join('') + '</svg>';
+      lastStep = -2; render(clock);
+    }
+    function arriveAt(i) { return i === 0 ? 0 : starts[i - 1] + dur(STEPS[i - 1]); }
+    function renderList(cyc) {
+      var last = 0, y = 0;
+      rows.forEach(function (r, i) {
+        var a = arriveAt(i), on = cyc >= a; r.classList.toggle('on', on); if (on) last = i;
+        r.classList.toggle('sync', !reduce && STEPS[i - 1] && STEPS[i - 1].k === 'sync' && cyc >= starts[i - 1] && cyc < a + 900);
+      });
+      // the pulse runs down the rail from one step to the next
+      var nx = Math.min(rows.length - 1, last + 1), p = last === rows.length - 1 ? 1 : Math.max(0, Math.min(1, (cyc - (starts[nx - 1] || 0)) / dur(STEPS[nx - 1])));
+      var y0 = rows[last].offsetTop + rows[last].offsetHeight / 2, y1 = rows[nx].offsetTop + rows[nx].offsetHeight / 2;
+      railFill.style.height = Math.max(0, y0 + (y1 - y0) * (last === rows.length - 1 ? 0 : ease(p)) - rows[0].offsetTop - rows[0].offsetHeight / 2) + 'px';
+      var closeOn = cyc >= T_END; rows[rows.length - 1].classList.toggle('orange', closeOn); rows[rows.length - 2].classList.toggle('orange', cyc >= arriveAt(rows.length - 2));
+      // the close: the steps fade out in order and ALAS appears
+      var f0 = T_END + F0;
+      rows.forEach(function (r, i) { var o = reduce ? 1 : 1 - Math.max(0, Math.min(1, (cyc - f0 - i * 140) / F_DUR)); r.style.opacity = o; });
+      list.querySelector('.afl-rail').style.opacity = reduce ? 1 : 1 - Math.max(0, Math.min(1, (cyc - f0) / F_DUR));
+      brandEl.classList.toggle('on', !reduce && cyc >= f0 + rows.length * 140 && cyc < HUB_FADE + 400);
+      var stp = Math.max(0, Math.min(STEPS.length - 1, last - 1 + (last === 0 ? 1 : 0)));
+      if (stp !== lastStep) { lastStep = stp; capN.textContent = String(stp + 1).padStart(2, '0') + '/' + STEPS.length; capT.textContent = STEPS[stp].txt; }
+    }
     function render(t) {
+      if (list) { renderList(reduce ? T_END : t % T_CYCLE); return; }
       if (!svg) return;
       var cyc = reduce ? T_END : t % T_CYCLE;
       var reached = { web: true }, cur = -1, dotP = null, dotO = false, sync = false, loopSeen = false;
