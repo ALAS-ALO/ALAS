@@ -228,10 +228,8 @@
  "y empresas": "and companies",
  "Así trabajan nuestras herramientas.": "How our tools work.",
  "Herramientas de Space": "Space tools",
- "Control normativo": "Regulatory check",
  "Herramienta anterior": "Previous tool",
  "Herramienta siguiente": "Next tool",
- "Le das una referencia catastral y consulta el planeamiento vigente, identifica la clasificación y la calificación del suelo y extrae los parámetros que se aplican a la parcela. En minutos tienes un informe preliminar, que un técnico revisa antes de proyectar.": "Give it a cadastral reference and it checks the current zoning plan, identifies the land classification and zoning, and extracts the parameters that apply to the plot. In minutes you have a preliminary report, which an expert reviews before design begins.",
  "Entrada": "Input",
  "Salida": "Output",
  "Revisión": "Review",
@@ -345,5 +343,6 @@
  "Estado final": "Final result",
  "Estado actual · Modelo BIM · Renders y recorrido · Obra · Estado final": "Existing state · BIM model · Renders and walkthrough · Construction · Final result",
  "Del estado actual al edificio terminado. Levantamos lo existente, lo modelamos en BIM, te enseñamos la propuesta en renders y recorridos antes de empezar, seguimos la obra y documentamos el resultado.": "From the existing building to the finished one. We survey what is there, model it in BIM, show you the proposal in renders and walkthroughs before starting, follow the works on site and document the result.",
- "Vivienda rehabilitada": "Renovated home"
+ "Vivienda rehabilitada": "Renovated home",
+ "Hacen por ti las tareas repetitivas y te entregan el resultado listo para revisar. En este ejemplo, el agente de control normativo recibe una referencia catastral, consulta el planeamiento vigente, identifica la clasificación y la calificación del suelo y extrae los parámetros que se aplican a la parcela. En minutos tienes un informe preliminar, que un técnico revisa antes de proyectar.": "They do the repetitive tasks for you and hand over the result ready for review. In this example, the regulatory check agent takes a cadastral reference, checks the current zoning plan, identifies the land classification and zoning, and extracts the parameters that apply to the plot. In minutes you have a preliminary report, which an expert reviews before design begins."
 }

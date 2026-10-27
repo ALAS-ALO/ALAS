@@ -751,3 +751,5 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .afl-word { width: 140px; height: auto; }
 .afl-word path { fill: none; stroke: var(--ink); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; }
 .proj-steps button[aria-pressed="true"] span { color: var(--ink); }
+/* a vertical wheel over a slider scrolls the page, never the slider itself */
+.cases .track { overflow-y: hidden; }

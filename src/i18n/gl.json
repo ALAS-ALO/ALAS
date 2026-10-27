@@ -164,7 +164,6 @@
  "Herramientas de Space": "Ferramentas de Space",
  "Herramienta anterior": "Ferramenta anterior",
  "Herramienta siguiente": "Ferramenta seguinte",
- "Le das una referencia catastral y consulta el planeamiento vigente, identifica la clasificación y la calificación del suelo y extrae los parámetros que se aplican a la parcela. En minutos tienes un informe preliminar, que un técnico revisa antes de proyectar.": "Dáslle unha referencia catastral e consulta o planeamento vixente, identifica a clasificación e a cualificación do solo e extrae os parámetros que se aplican á parcela. En minutos tes un informe preliminar, que un técnico revisa antes de proxectar.",
  "Salida": "Saída",
  "Simulación del agente de control normativo: recibe una referencia catastral, localiza el planeamiento y devuelve un informe con la clasificación, la calificación, la edificabilidad, la altura, la ocupación y los retranqueos de la parcela.": "Simulación do axente de control normativo: recibe unha referencia catastral, localiza o planeamento e devolve un informe coa clasificación, a cualificación, a edificabilidade, a altura, a ocupación e os recuamentos da parcela.",
  "Parcela localizada en el Catastro": "Parcela localizada no Catastro",
@@ -250,5 +249,6 @@
  "Herramientas": "Ferramentas",
  "Estado actual · Modelo BIM · Renders y recorrido · Obra · Estado final": "Estado actual · Modelo BIM · Renders e percorrido · Obra · Estado final",
  "Del estado actual al edificio terminado. Levantamos lo existente, lo modelamos en BIM, te enseñamos la propuesta en renders y recorridos antes de empezar, seguimos la obra y documentamos el resultado.": "Do estado actual ao edificio rematado. Levantamos o existente, modelámolo en BIM, amosámosche a proposta en renders e percorridos antes de comezar, seguimos a obra e documentamos o resultado.",
- "Vivienda rehabilitada": "Vivenda rehabilitada"
+ "Vivienda rehabilitada": "Vivenda rehabilitada",
+ "Hacen por ti las tareas repetitivas y te entregan el resultado listo para revisar. En este ejemplo, el agente de control normativo recibe una referencia catastral, consulta el planeamiento vigente, identifica la clasificación y la calificación del suelo y extrae los parámetros que se aplican a la parcela. En minutos tienes un informe preliminar, que un técnico revisa antes de proyectar.": "Fan por ti as tarefas repetitivas e entréganche o resultado listo para revisar. Neste exemplo, o axente de control normativo recibe unha referencia catastral, consulta o planeamento vixente, identifica a clasificación e a cualificación do solo e extrae os parámetros que se aplican á parcela. En minutos tes un informe preliminar, que un técnico revisa antes de proxectar."
 }
