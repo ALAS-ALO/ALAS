@@ -431,7 +431,7 @@
   var zones = [].slice.call(document.querySelectorAll('main > section, footer'));
   function headerBranch() {
     var y = top.getBoundingClientRect().bottom + 1, branch = 'studio', inSpace = false;
-    zones.forEach(function (z) { var r = z.getBoundingClientRect(); if (r.top <= y && r.bottom > y) { branch = z.getAttribute('data-branch') || 'studio'; if (z.id === 'space' || z.id === 'proyectos-space' || z.id === 'contacto') inSpace = true; } });
+    zones.forEach(function (z) { var r = z.getBoundingClientRect(); if (r.top <= y && r.bottom > y) { branch = z.getAttribute('data-branch') || 'studio'; if (z.id === 'space' || z.id === 'herramientas' || z.id === 'contacto') inSpace = true; } });
     if (zones[0].getBoundingClientRect().bottom > y) branch = 'studio';
     top.setAttribute('data-branch', branch);
     var active = inSpace || branch === 'space' ? 'space' : 'studio';
