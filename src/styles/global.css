@@ -753,3 +753,4 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .proj-steps button[aria-pressed="true"] span { color: var(--ink); }
 /* a vertical wheel over a slider scrolls the page, never the slider itself */
 .cases .track { overflow-y: hidden; }
+.faq details p a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
