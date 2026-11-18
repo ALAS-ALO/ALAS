@@ -1,0 +1,18 @@
+---
+// A section page (/studio/, /space/, /contacto/ and their EN/GL versions), cut from the home page by scripts/i18n.mjs
+import Base from '../layouts/Base.astro';
+import ROUTES from '../i18n/routes.json';
+import meta from '../i18n/meta.json';
+const files = import.meta.glob('../generated/{studio,space,contact}.{es,en,gl}.html', { query: '?raw', import: 'default', eager: true });
+type Lang = 'es' | 'en' | 'gl'; type Page = 'studio' | 'space' | 'contact';
+interface Props { lang: Lang; page: Page; }
+const { lang, page } = Astro.props;
+const html = files[`../generated/${page}.${lang}.html`] as string;
+const M = meta[lang], P = M.pages[page];
+const paths = { es: ROUTES.es[page], en: ROUTES.en[page], gl: ROUTES.gl[page] };
+const crumbs = [{ name: M.homeName, path: ROUTES[lang].home }, { name: P.name, path: ROUTES[lang][page] }];
+---
+<Base lang={lang} title={P.title} description={P.description} paths={paths} crumbs={crumbs}>
+  <Fragment set:html={html} />
+  <slot />
+</Base>

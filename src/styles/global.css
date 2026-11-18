@@ -680,6 +680,7 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .legal-back { font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; text-decoration: none; color: var(--muted) !important; padding-block: 12px; justify-self: start; }
 .legal-date { font-family: var(--font-mono); font-size: 12px !important; }
 .foot-legal a[aria-current="page"] { color: var(--ink); }
+.nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-underline-offset: 6px; }
 @media (max-width: 599px) { .legal-body dl > div { grid-template-columns: 1fr; gap: 2px; } }
 
 /* 404 */

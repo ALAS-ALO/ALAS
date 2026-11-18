@@ -1,6 +1,8 @@
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var SVGNS = 'http://www.w3.org/2000/svg';
+  // the home page carries the intro and the hero; the section pages (Studio, Space, Contact) only some sections
+  var HOME = !!document.getElementById('intro');
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   /* ---------- Services ---------- */
@@ -11,6 +13,7 @@
     return '<rect class="' + cls + '" x="' + (cx - h) + '" y="' + (cy - h) + '" width="' + s + '" height="' + s + '"/>';
   }
   function services(el, list) {
+    if (!el) return;
     el.innerHTML = list.map(function (d) {
       return '<article class="service" style="--turn:' + (d.shape === 'square' ? '45deg' : d.shape === 'triangle' ? '180deg' : '0deg') + '">' +
         '<div class="fig' + (d.video ? ' has-video' : '') + '" aria-hidden="true"><svg viewBox="0 0 100 100">' + shape(d.shape, 50, 50, 64, 'shape') + '</svg>' + (d.video ? '<video muted loop playsinline preload="none" data-video' + (d.poster ? ' poster="' + esc(d.poster) + '"' : '') + '><source data-src="' + esc(d.video.replace(/\.mp4$/, '.webm')) + '" type="video/webm"><source data-src="' + esc(d.video) + '" type="video/mp4"></video>' : '') + '<span class="tag">' + esc(d.media) + '</span></div>' +
@@ -241,7 +244,7 @@
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
   // Studio: light construction lines first, then the proposal in a heavier line, as when you project
-  var cs = document.getElementById('cv-studio'), pS = cs.parentNode, C30 = Math.cos(Math.PI / 6), STUDIO_T0 = performance.now();
+  var cs = document.getElementById('cv-studio'), pS = cs ? cs.parentNode : null, C30 = Math.cos(Math.PI / 6), STUDIO_T0 = performance.now();
   // A house drawn as it is projected: the plot and the axes in fine lines, then the house itself, only its visible edges, in a heavier line
   function rY(Y, x0, x1, z0, z1, open) { var e = [[x0, Y, z0, x0, Y, z1], [x0, Y, z1, x1, Y, z1], [x1, Y, z1, x1, Y, z0]]; if (!open) e.push([x1, Y, z0, x0, Y, z0]); return e; }
   function rX(X, y0, y1, z0, z1) { return [[X, y0, z0, X, y0, z1], [X, y0, z1, X, y1, z1], [X, y1, z1, X, y1, z0], [X, y1, z0, X, y0, z0]]; }
@@ -283,7 +286,7 @@
     }
     ctx.stroke();
   }
-  setupCanvas(cs, function (ctx, w, h, t) {
+  if (cs) setupCanvas(cs, function (ctx, w, h, t) {
     ctx.clearRect(0, 0, w, h);
     var R = region(pS, w, h, 'studio'), col = css(pS, '--draw');
     // scale so the plot and its guides fit, but centre the house itself in the free area
@@ -301,7 +304,7 @@
   });
 
   // Space: an electric pulse runs left to right and discovers the stages; branches split, rejoin and end in one node
-  var cp = document.getElementById('cv-space'), pP = cp.parentNode, SPACE_T0 = performance.now();
+  var cp = document.getElementById('cv-space'), pP = cp ? cp.parentNode : null, SPACE_T0 = performance.now();
   var NODES = [
     { x: 0, y: 0, icon: 'brief' },
     { x: .25, y: 0, icon: 'data' },
@@ -346,7 +349,7 @@
     else { ctx.moveTo(-5.5, .5); ctx.lineTo(-1.5, 4.5); ctx.lineTo(6, -4); }
     ctx.stroke();
   }
-  setupCanvas(cp, function (ctx, w, h, t) {
+  if (cp) setupCanvas(cp, function (ctx, w, h, t) {
     ctx.clearRect(0, 0, w, h);
     var R = region(pP, w, h, 'space'), col = css(pP, '--draw'), gnd = css(pP, '--ground');
     var bt = t >= 1e9 ? 1e9 : performance.now() - SPACE_T0;
@@ -403,7 +406,7 @@
   }
   function stepSplit() { SPLIT += (target - SPLIT) * .08; applySplit(); if (Math.abs(target - SPLIT) > .05) requestAnimationFrame(stepSplit); else { SPLIT = target; applySplit(); running = false; } }
   function aim(v) { target = v; if (!running) { running = true; requestAnimationFrame(stepSplit); } }
-  if (!reduce) {
+  if (!reduce && hero) {
     hero.addEventListener('pointermove', function (e) {
       if (window.innerWidth < 900 || e.pointerType === 'touch') return;
       var r = hero.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
@@ -432,13 +435,13 @@
   function headerBranch() {
     var y = top.getBoundingClientRect().bottom + 1, branch = 'studio', inSpace = false;
     zones.forEach(function (z) { var r = z.getBoundingClientRect(); if (r.top <= y && r.bottom > y) { branch = z.getAttribute('data-branch') || 'studio'; if (z.id === 'space' || z.id === 'herramientas' || z.id === 'contacto') inSpace = true; } });
-    if (zones[0].getBoundingClientRect().bottom > y) branch = 'studio';
+    if (HOME && zones[0].getBoundingClientRect().bottom > y) branch = 'studio';
     top.setAttribute('data-branch', branch);
     var active = inSpace || branch === 'space' ? 'space' : 'studio';
-    if (window.innerWidth < 900) { var pr = pP.getBoundingClientRect(); if (pr.top <= y + 2 && pr.bottom > y) active = 'space'; }
+    if (window.innerWidth < 900 && pP) { var pr = pP.getBoundingClientRect(); if (pr.top <= y + 2 && pr.bottom > y) active = 'space'; }
     top.setAttribute('data-active', active);
-    var ar = document.getElementById('alas').getBoundingClientRect();
-    top.setAttribute('data-logo', zones[0].getBoundingClientRect().bottom > y || (ar.top <= y && ar.bottom > y) ? 'home' : active);
+    var alasEl = document.getElementById('alas'), ar = alasEl ? alasEl.getBoundingClientRect() : { top: 1e9, bottom: -1e9 };
+    top.setAttribute('data-logo', HOME && (zones[0].getBoundingClientRect().bottom > y || (ar.top <= y && ar.bottom > y)) ? 'home' : active);
     radios.forEach(function (b) { b.setAttribute('aria-checked', String(b.getAttribute('data-go') === active)); b.tabIndex = b.getAttribute('data-go') === active ? 0 : -1; });
   }
   window.addEventListener('scroll', headerBranch, { passive: true });
@@ -446,6 +449,8 @@
   radios.forEach(function (b) {
     b.addEventListener('click', function () {
       var go = b.getAttribute('data-go');
+      // on a section page the other branch lives on its own page
+      if (!document.getElementById(go)) { location.href = go === 'space' ? '{{space}}' : '{{studio}}'; return; }
       if (window.innerWidth < 900 && !reduce) { var pane = go === 'space' ? pP : pS; glide(pane.getBoundingClientRect().top + window.scrollY - top.offsetHeight); return; }
       document.getElementById(go).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
     });
@@ -763,7 +768,7 @@
 
   /* ---------- Intro: full name, fade, then each S writes its branch ---------- */
   var intro = document.getElementById('intro'), timers = [], raf = 0;
-  var ig = intro.querySelector('.intro-svg g'), ipaths = [].slice.call(ig.querySelectorAll('path')), twin = intro.querySelector('.intro-svg .twin'), heroEl = document.querySelector('.hero');
+  var ig = intro ? intro.querySelector('.intro-svg g') : null, ipaths = ig ? [].slice.call(ig.querySelectorAll('path')) : [], twin = intro ? intro.querySelector('.intro-svg .twin') : null, heroEl = document.querySelector('.hero');
   // Centerlines of the four letters, redrawn on the logo's own geometry: straight strokes joined by arcs of one radius (logo units)
   var CL = [[[0.0,310.0],[1.6,306.3],[3.1,302.6],[4.7,298.9],[6.3,295.2],[7.8,291.5],[9.4,287.8],[11.0,284.1],[12.5,280.4],[14.1,276.7],[15.7,273.0],[17.2,269.3],[18.8,265.7],[20.4,262.0],[21.9,258.3],[23.5,254.6],[25.1,250.9],[26.6,247.2],[28.2,243.5],[29.8,239.8],[31.3,236.1],[32.9,232.4],[34.5,228.7],[36.0,225.0],[37.6,221.3],[39.2,217.6],[40.7,213.9],[42.3,210.2],[43.9,206.5],[45.4,202.8],[47.0,199.1],[48.6,195.4],[50.1,191.7],[51.7,188.0],[53.3,184.3],[54.8,180.7],[56.4,177.0],[58.0,173.3],[59.5,169.6],[61.1,165.9],[62.7,162.2],[64.2,158.5],[65.8,154.8],[67.4,151.1],[68.9,147.4],[70.5,143.7],[72.1,140.0],[73.6,136.3],[75.2,132.6],[76.8,128.9],[78.3,125.2],[79.9,121.5],[81.5,117.8],[83.0,114.1],[84.6,110.4],[86.2,106.7],[87.8,103.0],[89.3,99.3],[90.9,95.7],[92.5,92.0],[94.0,88.3],[95.6,84.6],[97.2,80.9],[98.7,77.2],[100.3,73.5],[101.9,69.8],[103.4,66.1],[105.0,62.4],[106.6,58.7],[108.1,55.0],[109.7,51.3],[111.3,47.6],[112.8,43.9],[114.4,40.2],[116.0,36.5],[117.5,32.8],[119.3,29.1],[121.4,25.6],[123.9,22.3],[126.6,19.2],[129.6,16.4],[132.9,13.9],[136.4,11.7],[140.0,9.8],[143.9,8.3],[147.8,7.2],[151.9,6.4],[156.0,6.0],[160.1,6.0],[164.2,6.4],[168.2,7.2],[172.2,8.3],[176.0,9.8],[179.7,11.7],[183.2,13.9],[186.4,16.4],[189.5,19.2],[192.2,22.3],[194.6,25.6],[196.8,29.1],[198.5,32.8],[200.1,36.5],[201.7,40.2],[203.2,43.9],[204.8,47.6],[206.4,51.3],[207.9,55.0],[209.5,58.7],[211.1,62.4],[212.6,66.1],[214.2,69.8],[215.8,73.5],[217.3,77.2],[218.9,80.9],[220.5,84.6],[222.0,88.3],[223.6,92.0],[225.2,95.7],[226.7,99.3],[228.3,103.0],[229.9,106.7],[231.4,110.4],[233.0,114.1],[234.6,117.8],[236.1,121.5],[237.7,125.2],[239.3,128.9],[240.8,132.6],[242.4,136.3],[244.0,140.0],[245.5,143.7],[247.1,147.4],[248.7,151.1],[250.3,154.8],[251.8,158.5],[253.4,162.2],[255.0,165.9],[256.5,169.6],[258.1,173.3],[259.7,177.0],[261.2,180.7],[262.8,184.3],[264.4,188.0],[265.9,191.7],[267.5,195.4],[269.1,199.1],[270.6,202.8],[272.2,206.5],[273.8,210.2],[275.3,213.9],[276.9,217.6],[278.5,221.3],[280.0,225.0],[281.6,228.7],[283.2,232.4],[284.7,236.1],[286.3,239.8],[287.9,243.5],[289.4,247.2],[291.0,250.9],[292.6,254.6],[294.1,258.3],[295.7,262.0],[297.3,265.7],[298.8,269.3],[300.4,273.0],[302.0,276.7],[303.5,280.4],[305.1,284.1],[306.7,287.8],[308.2,291.5],[309.8,295.2],[311.4,298.9],[312.9,302.6],[314.5,306.3],[316.1,310.0]],[[645.0,310.0],[641.0,310.0],[637.0,310.0],[633.0,310.0],[628.9,310.0],[624.9,310.0],[620.9,310.0],[616.9,310.0],[612.8,310.0],[608.8,310.0],[604.8,310.0],[600.8,310.0],[596.8,310.0],[592.7,310.0],[588.7,310.0],[584.7,310.0],[580.7,310.0],[576.6,310.0],[572.6,310.0],[568.6,310.0],[564.6,310.0],[560.5,310.0],[556.5,310.0],[552.5,310.0],[548.5,310.0],[544.5,310.0],[540.4,310.0],[536.4,310.0],[532.4,310.0],[528.4,310.0],[524.3,310.0],[520.3,310.0],[516.3,310.0],[512.3,310.0],[508.2,310.0],[504.2,310.0],[500.2,310.0],[496.2,310.0],[492.1,310.0],[488.1,310.0],[484.1,310.0],[480.1,310.0],[476.1,310.0],[472.0,310.0],[468.0,309.8],[463.9,309.3],[460.0,308.3],[456.1,307.0],[452.4,305.4],[448.9,303.4],[445.5,301.1],[442.4,298.5],[439.5,295.6],[436.9,292.5],[434.6,289.2],[432.6,285.6],[431.0,281.9],[429.7,278.0],[428.8,274.1],[428.2,270.1],[428.0,266.0],[428.0,262.0],[428.0,258.0],[428.0,254.0],[428.0,250.0],[428.0,246.0],[428.0,242.0],[428.0,238.0],[428.0,234.0],[428.0,230.0],[428.0,226.0],[428.0,222.0],[428.0,218.0],[428.0,214.0],[428.0,210.0],[428.0,206.0],[428.0,202.0],[428.0,198.0],[428.0,194.0],[428.0,190.0],[428.0,186.0],[428.0,182.0],[428.0,178.0],[428.0,174.0],[428.0,170.0],[428.0,166.0],[428.0,162.0],[428.0,158.0],[428.0,154.0],[428.0,150.0],[428.0,146.0],[428.0,142.0],[428.0,138.0],[428.0,134.0],[428.0,130.0],[428.0,126.0],[428.0,122.0],[428.0,118.0],[428.0,114.0],[428.0,110.0],[428.0,106.0],[428.0,102.0],[428.0,98.0],[428.0,94.0],[428.0,90.0],[428.0,86.0],[428.0,82.0],[428.0,78.0],[428.0,74.0],[428.0,70.0],[428.0,66.0],[428.0,62.0],[428.0,58.0],[428.0,54.0],[428.0,50.0],[428.0,46.0],[428.0,42.0],[428.0,38.0],[428.0,34.0],[428.0,30.0],[428.0,26.0],[428.0,22.0],[428.0,18.0],[428.0,14.0],[428.0,10.0],[428.0,6.0]],[[708.0,310.0],[709.6,306.3],[711.1,302.6],[712.7,298.9],[714.3,295.2],[715.8,291.5],[717.4,287.8],[719.0,284.1],[720.5,280.4],[722.1,276.7],[723.7,273.0],[725.2,269.3],[726.8,265.7],[728.4,262.0],[729.9,258.3],[731.5,254.6],[733.1,250.9],[734.6,247.2],[736.2,243.5],[737.8,239.8],[739.3,236.1],[740.9,232.4],[742.5,228.7],[744.0,225.0],[745.6,221.3],[747.2,217.6],[748.7,213.9],[750.3,210.2],[751.9,206.5],[753.4,202.8],[755.0,199.1],[756.6,195.4],[758.1,191.7],[759.7,188.0],[761.3,184.3],[762.8,180.7],[764.4,177.0],[766.0,173.3],[767.5,169.6],[769.1,165.9],[770.7,162.2],[772.2,158.5],[773.8,154.8],[775.4,151.1],[776.9,147.4],[778.5,143.7],[780.1,140.0],[781.6,136.3],[783.2,132.6],[784.8,128.9],[786.3,125.2],[787.9,121.5],[789.5,117.8],[791.0,114.1],[792.6,110.4],[794.2,106.7],[795.8,103.0],[797.3,99.3],[798.9,95.7],[800.5,92.0],[802.0,88.3],[803.6,84.6],[805.2,80.9],[806.7,77.2],[808.3,73.5],[809.9,69.8],[811.4,66.1],[813.0,62.4],[814.6,58.7],[816.1,55.0],[817.7,51.3],[819.3,47.6],[820.8,43.9],[822.4,40.2],[824.0,36.5],[825.5,32.8],[827.3,29.1],[829.4,25.6],[831.9,22.3],[834.6,19.2],[837.6,16.4],[840.9,13.9],[844.4,11.7],[848.0,9.8],[851.9,8.3],[855.8,7.2],[859.9,6.4],[864.0,6.0],[868.1,6.0],[872.2,6.4],[876.2,7.2],[880.2,8.3],[884.0,9.8],[887.7,11.7],[891.2,13.9],[894.4,16.4],[897.5,19.2],[900.2,22.3],[902.6,25.6],[904.8,29.1],[906.5,32.8],[908.1,36.5],[909.7,40.2],[911.2,43.9],[912.8,47.6],[914.4,51.3],[915.9,55.0],[917.5,58.7],[919.1,62.4],[920.6,66.1],[922.2,69.8],[923.8,73.5],[925.3,77.2],[926.9,80.9],[928.5,84.6],[930.0,88.3],[931.6,92.0],[933.2,95.7],[934.7,99.3],[936.3,103.0],[937.9,106.7],[939.4,110.4],[941.0,114.1],[942.6,117.8],[944.1,121.5],[945.7,125.2],[947.3,128.9],[948.8,132.6],[950.4,136.3],[952.0,140.0],[953.5,143.7],[955.1,147.4],[956.7,151.1],[958.3,154.8],[959.8,158.5],[961.4,162.2],[963.0,165.9],[964.5,169.6],[966.1,173.3],[967.7,177.0],[969.2,180.7],[970.8,184.3],[972.4,188.0],[973.9,191.7],[975.5,195.4],[977.1,199.1],[978.6,202.8],[980.2,206.5],[981.8,210.2],[983.3,213.9],[984.9,217.6],[986.5,221.3],[988.0,225.0],[989.6,228.7],[991.2,232.4],[992.7,236.1],[994.3,239.8],[995.9,243.5],[997.4,247.2],[999.0,250.9],[1000.6,254.6],[1002.1,258.3],[1003.7,262.0],[1005.3,265.7],[1006.8,269.3],[1008.4,273.0],[1010.0,276.7],[1011.5,280.4],[1013.1,284.1],[1014.7,287.8],[1016.2,291.5],[1017.8,295.2],[1019.4,298.9],[1020.9,302.6],[1022.5,306.3],[1024.1,310.0]],[[1126.0,310.0],[1130.1,310.0],[1134.1,310.0],[1138.1,310.0],[1142.1,310.0],[1146.1,310.0],[1150.2,310.0],[1154.2,310.0],[1158.2,310.0],[1162.2,310.0],[1166.3,310.0],[1170.3,310.0],[1174.3,310.0],[1178.3,310.0],[1182.3,310.0],[1186.4,310.0],[1190.4,310.0],[1194.4,310.0],[1198.4,310.0],[1202.5,310.0],[1206.5,310.0],[1210.5,310.0],[1214.5,310.0],[1218.5,310.0],[1222.6,310.0],[1226.6,310.0],[1230.6,310.0],[1234.6,310.0],[1238.7,310.0],[1242.7,310.0],[1246.7,310.0],[1250.7,310.0],[1254.7,310.0],[1258.8,310.0],[1262.8,310.0],[1266.8,310.0],[1270.8,310.0],[1274.9,310.0],[1278.9,310.0],[1282.9,310.0],[1286.9,310.0],[1290.9,310.0],[1295.0,310.0],[1299.0,310.0],[1303.0,310.0],[1307.0,310.0],[1311.1,309.8],[1315.1,309.3],[1319.1,308.3],[1322.9,307.0],[1326.6,305.4],[1330.2,303.4],[1333.5,301.1],[1336.7,298.5],[1339.5,295.6],[1342.1,292.5],[1344.4,289.2],[1346.4,285.6],[1348.1,281.9],[1349.4,278.0],[1350.3,274.1],[1350.8,270.1],[1351.0,266.0],[1351.0,262.0],[1351.0,258.0],[1351.0,254.0],[1351.0,250.0],[1351.0,246.0],[1351.0,242.0],[1351.0,238.0],[1351.0,234.0],[1351.0,230.0],[1351.0,226.0],[1351.0,222.0],[1351.0,218.0],[1351.0,214.0],[1351.0,210.0],[1351.0,206.0],[1351.0,202.0],[1350.8,197.9],[1350.3,193.9],[1349.4,190.0],[1348.1,186.1],[1346.4,182.4],[1344.4,178.8],[1342.1,175.5],[1339.5,172.4],[1336.7,169.5],[1333.5,166.9],[1330.2,164.6],[1326.6,162.6],[1322.9,161.0],[1319.1,159.7],[1315.1,158.7],[1311.1,158.2],[1307.0,158.0],[1303.0,158.0],[1299.0,158.0],[1295.0,158.0],[1290.9,158.0],[1286.9,158.0],[1282.9,158.0],[1278.9,158.0],[1274.8,158.0],[1270.8,158.0],[1266.8,158.0],[1262.7,158.0],[1258.7,158.0],[1254.7,158.0],[1250.7,158.0],[1246.6,158.0],[1242.6,158.0],[1238.6,158.0],[1234.6,158.0],[1230.5,158.0],[1226.5,158.0],[1222.5,158.0],[1218.5,158.0],[1214.4,158.0],[1210.4,158.0],[1206.4,158.0],[1202.4,158.0],[1198.3,158.0],[1194.3,158.0],[1190.3,158.0],[1186.3,158.0],[1182.2,158.0],[1178.2,158.0],[1174.2,158.0],[1170.2,158.0],[1166.1,158.0],[1162.1,158.0],[1158.1,158.0],[1154.1,158.0],[1150.0,158.0],[1146.0,157.8],[1141.9,157.3],[1138.0,156.3],[1134.1,155.0],[1130.4,153.4],[1126.9,151.4],[1123.5,149.1],[1120.4,146.5],[1117.5,143.6],[1114.9,140.5],[1112.6,137.2],[1110.6,133.6],[1109.0,129.9],[1107.7,126.0],[1106.8,122.1],[1106.2,118.1],[1106.0,114.0],[1106.0,110.0],[1106.0,106.0],[1106.0,102.0],[1106.0,98.0],[1106.0,94.0],[1106.0,90.0],[1106.0,86.0],[1106.0,82.0],[1106.0,78.0],[1106.0,74.0],[1106.0,70.0],[1106.0,66.0],[1106.0,62.0],[1106.0,58.0],[1106.0,54.0],[1106.0,50.0],[1106.2,45.9],[1106.8,41.9],[1107.7,38.0],[1109.0,34.1],[1110.6,30.4],[1112.6,26.8],[1114.9,23.5],[1117.5,20.4],[1120.4,17.5],[1123.5,14.9],[1126.9,12.6],[1130.4,10.6],[1134.1,9.0],[1138.0,7.7],[1141.9,6.7],[1146.0,6.2],[1150.0,6.0],[1154.1,6.0],[1158.1,6.0],[1162.1,6.0],[1166.1,6.0],[1170.1,6.0],[1174.2,6.0],[1178.2,6.0],[1182.2,6.0],[1186.2,6.0],[1190.3,6.0],[1194.3,6.0],[1198.3,6.0],[1202.3,6.0],[1206.3,6.0],[1210.4,6.0],[1214.4,6.0],[1218.4,6.0],[1222.4,6.0],[1226.5,6.0],[1230.5,6.0],[1234.5,6.0],[1238.5,6.0],[1242.5,6.0],[1246.6,6.0],[1250.6,6.0],[1254.6,6.0],[1258.6,6.0],[1262.7,6.0],[1266.7,6.0],[1270.7,6.0],[1274.7,6.0],[1278.7,6.0],[1282.8,6.0],[1286.8,6.0],[1290.8,6.0],[1294.8,6.0],[1298.9,6.0],[1302.9,6.0],[1306.9,6.0],[1310.9,6.0],[1314.9,6.0],[1319.0,6.0],[1323.0,6.0],[1327.0,6.0],[1331.0,6.0]]];
   function wrapA(a) { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; }
@@ -908,7 +913,7 @@
       glide(dir > 0 ? (fr > .15 ? T[i + 1] : T[i]) : (fr < .85 ? T[i] : T[i + 1])); return;
     }
   }
-  window.addEventListener('scroll', function () {
+  if (HOME) window.addEventListener('scroll', function () {
     var y = window.scrollY; if (y !== lastY && !snapping) dir = y > lastY ? 1 : -1; lastY = y;
     // a fling never carries past the next screen: stop on the first slide it crosses
     if (!snapping && !touching && gStart !== null && !blocked()) {
@@ -920,11 +925,11 @@
     clearTimeout(endTimer); endTimer = setTimeout(maybeSnap, 130);
     if (!checkQueued) { checkQueued = true; requestAnimationFrame(function () { checkQueued = false; checkPanes(); }); }
   }, { passive: true });
-  window.addEventListener('touchstart', function () { touching = true; if (!snapping) gStart = window.scrollY; }, { passive: true });
-  window.addEventListener('touchend', function () { touching = false; clearTimeout(endTimer); endTimer = setTimeout(maybeSnap, 130); }, { passive: true });
+  if (HOME) window.addEventListener('touchstart', function () { touching = true; if (!snapping) gStart = window.scrollY; }, { passive: true });
+  if (HOME) window.addEventListener('touchend', function () { touching = false; clearTimeout(endTimer); endTimer = setTimeout(maybeSnap, 130); }, { passive: true });
   window.addEventListener('touchcancel', function () { touching = false; }, { passive: true });
   // Wheel and trackpad: one notch or one swipe moves one screen; the inertia tail is absorbed
-  window.addEventListener('wheel', function (e) {
+  if (HOME) window.addEventListener('wheel', function (e) {
     if (blocked() || e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
     var now = performance.now(), quiet = now - wheelT > 240; wheelT = now;
     var T = snapPoints(), y = window.scrollY, inZone = y <= T[T.length - 1] + 2;
@@ -935,7 +940,7 @@
     if (to === null) return;
     e.preventDefault(); wheelHold = true; glide(to);
   }, { passive: false });
-  window.addEventListener('keydown', function (e) {
+  if (HOME) window.addEventListener('keydown', function (e) {
     if (blocked() || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
     var tg = e.target, tag = tg && tg.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (tg && tg.isContentEditable)) return;
@@ -1125,7 +1130,7 @@
       if (k < 1) raf = requestAnimationFrame(step); else land();
     })(st);
   }
-  document.getElementById('intro-skip').addEventListener('click', function () {
+  if (HOME) document.getElementById('intro-skip').addEventListener('click', function () {
     timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf);
     intro.getAnimations().forEach(function (a) { a.cancel(); }); ig.getAnimations().forEach(function (a) { a.cancel(); });
     land();
@@ -1134,7 +1139,11 @@
 
   // Arriving at a section (a search result or a shared link such as /#space): no intro and no hero, straight to that section
   var deepTarget = (function () { var id = decodeURIComponent(location.hash.slice(1)); return id && id !== 'inicio' ? document.getElementById(id) : null; })();
-  if (deepTarget) {
+  if (!HOME) {
+    // section page: the header sits over the page from the start; a #section in the address lands below it
+    document.body.classList.add('past-hero');
+    if (deepTarget) { var goSec = function () { window.scrollTo({ top: Math.max(0, deepTarget.getBoundingClientRect().top + window.scrollY - top.offsetHeight), behavior: 'instant' }); }; requestAnimationFrame(goSec); window.addEventListener('load', goSec); }
+  } else if (deepTarget) {
     words.forEach(settle);
     [pS, pP].forEach(function (p) { p.played = true; p.classList.remove('is-waiting'); });
     STUDIO_T0 = SPACE_T0 = performance.now() - 1e5;
@@ -1626,9 +1635,10 @@
     (function loop(now) { var r = fig.getBoundingClientRect(); if (r.left < window.innerWidth && r.right > 0 && r.bottom > 0 && r.top < window.innerHeight) { if (t0 === null) t0 = now; draw(now - t0); } requestAnimationFrame(loop); })(performance.now());
   })();
 
-  document.getElementById('tabs-logo').innerHTML = document.querySelector('.foot .logo').innerHTML;
+  if (document.getElementById('tabs-logo')) document.getElementById('tabs-logo').innerHTML = document.querySelector('.foot .logo').innerHTML;
   /* ---------- Sliders (ALAS panels, Space tools): tabs, arrows, swipe ---------- */
   function slider(root, full) {
+    if (!root) return;
     var track = root.querySelector('.track'), tabs = [].slice.call(root.querySelectorAll('[role="tab"]'));
     var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
     var prev = root.querySelector('.tab-prev, #tab-prev'), next = root.querySelector('.tab-next, #tab-next'), cur = 0, queued = false;
@@ -1674,7 +1684,10 @@
   document.querySelectorAll('.cta[data-rama]').forEach(function (a) { a.addEventListener('click', function () { var r = document.getElementById('r-' + a.getAttribute('data-rama')); if (r) r.checked = true; }); });
 
   /* ---------- Form ---------- */
-  document.getElementById('form').addEventListener('submit', function (e) {
+  var form = document.getElementById('form');
+  // arriving from a call to action on another page (?rama=studio): that branch comes preselected
+  (function () { var q = /[?&]rama=(studio|space|both)\b/.exec(location.search), r = q && document.getElementById('r-' + q[1]); if (r) r.checked = true; })();
+  if (form) form.addEventListener('submit', function (e) {
     e.preventDefault();
     var mail = document.getElementById('f-mail').value.trim(), note = document.getElementById('form-note');
     if (!mail || mail.indexOf('@') < 1) { note.textContent = 'Escribe un correo válido para poder responderte.'; document.getElementById('f-mail').focus(); return; }

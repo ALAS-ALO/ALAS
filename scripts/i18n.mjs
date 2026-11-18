@@ -51,6 +51,43 @@ function translateJs(src, dict) {
   return out;
 }
 
+// Section pages (/studio/, /space/, /contacto/): the same header, sections and footer as the home page,
+// cut from the translated home so they never drift apart. Links that pointed inside the home now point to pages.
+const PAGES = {
+  studio: { sections: ['studio', 'trayectoria'] },
+  space: { sections: ['space', 'trayectoria'] },
+  contact: { sections: ['contacto', 'faq'] },
+};
+// the whole element that starts at `start`, counting nested tags of the same name
+function element(src, start, tag) {
+  const re = new RegExp('<' + tag + '\\b|</' + tag + '>', 'g');
+  re.lastIndex = start; let depth = 0, m;
+  while ((m = re.exec(src))) { depth += m[0][1] === '/' ? -1 : 1; if (!depth) return src.slice(start, re.lastIndex); }
+  throw new Error('unclosed <' + tag + '>');
+}
+function byId(src, id) {
+  const at = src.search(new RegExp('<section\\b[^>]*\\bid="' + id + '"'));
+  if (at < 0) throw new Error('missing section #' + id);
+  return element(src, at, 'section');
+}
+function sectionPage(full, lang, key, def) {
+  const R = ROUTES[lang];
+  const NAV = { inicio: R.home, alas: R.home + '#alas', studio: R.studio, proyectos: R.studio + '#proyectos', space: R.space, herramientas: R.space + '#herramientas', contacto: R.contact };
+  let header = element(full, full.indexOf('<header'), 'header')
+    .replace(/href="#(\w+)"/g, (m, id) => (id in NAV ? `href="${NAV[id]}"` : m))
+    .replace(/<a href="([^"]*)" hreflang="(\w+)"/g, (m, h, l) => (ROUTES[l] ? `<a href="${ROUTES[l][key]}" hreflang="${l}"` : m))
+    .replace(`<a href="${R[key]}">`, `<a href="${R[key]}" aria-current="page">`);
+  let body = def.sections.map((id) => byId(full, id)).join('\n')
+    // calls to action go to the contact page with their branch preselected
+    .replace(/href="#contacto" data-rama="(\w+)"/g, (m, r) => `href="${R.contact}?rama=${r}" data-rama="${r}"`)
+    .replace(/href="#(\w+)"/g, (m, id) => (id in NAV ? `href="${NAV[id]}"` : m));
+  // the page's own heading is its first big title
+  body = body.replace(/<h2 class="display-l">([\s\S]*?)<\/h2>/, '<h1 class="display-l">$1</h1>');
+  const footer = element(full, full.indexOf('<footer'), 'footer')
+    .replace(`<a href="${R[key]}">`, `<a href="${R[key]}" aria-current="page">`);
+  return header + '\n<main>\n' + body + '\n</main>\n' + footer + '\n';
+}
+
 mkdirSync(new URL('src/generated/', root), { recursive: true });
 for (const [lang, href] of Object.entries(LANGS)) {
   const dict = lang === 'es' ? {} : JSON.parse(read(`src/i18n/${lang}.json`));
@@ -58,8 +95,10 @@ for (const [lang, href] of Object.entries(LANGS)) {
   const sorted = Object.fromEntries(Object.entries(dict).sort((a, b) => b[0].length - a[0].length));
   let page = translateHtml(html, sorted)
     .replace(`hreflang="${lang}" lang="${lang}"`, `hreflang="${lang}" lang="${lang}" aria-current="page"`);
-  writeFileSync(new URL(`src/generated/home.${lang}.html`, root), fill(page, lang));
+  const full = fill(page, lang);
+  writeFileSync(new URL(`src/generated/home.${lang}.html`, root), full);
   writeFileSync(new URL(`src/generated/main.${lang}.js`, root), fill(translateJs(js, sorted), lang));
+  for (const [key, def] of Object.entries(PAGES)) writeFileSync(new URL(`src/generated/${key}.${lang}.html`, root), sectionPage(full, lang, key, def));
   void href;
 }
 console.log('i18n: generated es, en, gl');

@@ -31,7 +31,8 @@ const mail = SITE.CORREO;
   <footer class="foot wrap">
     <div class="inner">
       <span class="proto">{L.ui.team}</span>
-      <a class="proto foot-mail" href={`mailto:${mail}`}>{mail}</a>
+      {/@/.test(mail) && <a class="proto foot-mail" href={`mailto:${mail}`}>{mail}</a>}
+      <nav class="foot-legal foot-site" aria-label={{ es: 'Secciones', en: 'Sections', gl: 'Seccións' }[lang]}><a href={R.studio}>ALAS Studio</a><a href={R.space}>ALAS Space</a><a href={R.contact}>{{ es: 'Contacto', en: 'Contact', gl: 'Contacto' }[lang]}</a></nav>
       <nav class="foot-legal" aria-label={L.ui.nav}><a href={R.notice} aria-current={doc === 'notice' ? 'page' : undefined}>{L.ui.notice}</a><a href={R.privacy} aria-current={doc === 'privacy' ? 'page' : undefined}>{L.ui.privacy}</a><a href={R.cookies} aria-current={doc === 'cookies' ? 'page' : undefined}>{L.ui.cookies}</a></nav>
       <span class="proto">© 2026 ALAS</span>
     </div>
