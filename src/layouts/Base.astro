@@ -6,7 +6,7 @@ interface Props { lang: Lang; title?: string; description?: string; paths?: Reco
 const { lang, title, description, paths: given, noindex, home } = Astro.props;
 const m = meta[lang];
 const paths = given ?? { es: '/', en: '/en/', gl: '/gl/' };
-const site = Astro.site ?? new URL('https://alas.lopezoteroadrian.workers.dev');
+const site = Astro.site ?? new URL('https://alaslab.com');
 const url = (p: string) => new URL(p, site).href;
 const t = title ?? m.title, d = description ?? m.description;
 // structured data for search engines: who is behind the site and what it is

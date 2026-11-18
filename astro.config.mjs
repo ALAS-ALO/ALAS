@@ -3,7 +3,7 @@ import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://alas.lopezoteroadrian.workers.dev',
+  site: process.env.SITE_URL || 'https://alaslab.com',
   output: 'static',
   adapter: cloudflare({ imageService: 'passthrough' }),
   integrations: [sitemap()],

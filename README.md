@@ -19,7 +19,7 @@ Web de ALAS (Studio + Space) en Astro, en español, inglés y gallego. Se public
 | Variable | Valor |
 |---|---|
 | `NOTION_TOKEN` | Tipo **Secret**, en *Variables and Secrets*. El secreto de la integración «Web ALAS» de Notion, que debe estar conectada a la base «Clientes». |
-| `SITE_URL` | En *Build → Variables and secrets*. El dominio definitivo, p. ej. `https://alas.studio` (se usa en el sitemap y en las etiquetas para buscadores). |
+| `SITE_URL` | En *Build → Variables and secrets*. Opcional: dominio del sitio. Por defecto `https://alaslab.com` (se usa en el sitemap y en las etiquetas para buscadores). |
 
 ## Comandos
 
