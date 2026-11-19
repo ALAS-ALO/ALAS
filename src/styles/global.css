@@ -732,7 +732,7 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .afl-dot svg { width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .4s; }
 .afl-txt { display: grid; gap: 2px; min-width: 0; }
 .afl-txt b { font-weight: 500; font-size: 16px; line-height: 20px; color: var(--muted); transition: color .4s; }
-.afl-txt small { font-family: var(--font-mono); font-size: 12.5px; line-height: 17px; color: var(--muted); opacity: .75; }
+.afl-txt small { font-family: var(--font-mono); font-size: 12.5px; line-height: 17px; color: var(--muted); opacity: .82; }
 .afl-row.on .afl-dot { border-color: var(--accent); }
 .afl-row.on .afl-dot svg { stroke: var(--ink); }
 .afl-row.on .afl-txt b { color: var(--ink); }
@@ -754,3 +754,4 @@ fieldset { border: 0; margin: 0; padding: 0; }
 .proj-steps button[aria-pressed="true"] span { color: var(--ink); }
 /* a vertical wheel over a slider scrolls the page, never the slider itself */
 .cases .track { overflow-y: hidden; }
+.faq details p a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }

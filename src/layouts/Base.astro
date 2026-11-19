@@ -15,7 +15,7 @@ const ld = home ? JSON.stringify({
   '@graph': [
     { '@type': 'ProfessionalService', '@id': url('/#alas'), name: 'ALAS', alternateName: ['ALAS Studio', 'ALAS Space'], url: url(paths[lang]), logo: url('/apple-touch-icon.png'), image: url('/og.png'), description: d,
       founder: { '@type': 'Person', name: 'Adrián López Otero', jobTitle: lang === 'en' ? 'Architect' : 'Arquitecto' },
-      address: { '@type': 'PostalAddress', addressLocality: 'Vigo', addressRegion: 'Pontevedra', addressCountry: 'ES' }, areaServed: { '@type': 'Country', name: 'España' },
+      address: { '@type': 'PostalAddress', postalCode: '36209', addressLocality: 'Vigo', addressRegion: 'Pontevedra', addressCountry: 'ES' }, areaServed: { '@type': 'Country', name: 'España' },
       knowsAbout: ['Arquitectura', 'BIM', 'Rehabilitación', 'Automatización', 'Inteligencia artificial aplicada a la arquitectura'] },
     { '@type': 'WebSite', '@id': url('/#web'), url: url('/'), name: 'ALAS', inLanguage: lang, publisher: { '@id': url('/#alas') } },
   ],
