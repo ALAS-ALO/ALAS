@@ -85,6 +85,8 @@ function sectionPage(full, lang, key, def) {
   body = body.replace(/<h2 class="display-l">([\s\S]*?)<\/h2>/, '<h1 class="display-l">$1</h1>');
   const footer = element(full, full.indexOf('<footer'), 'footer')
     .replace(`<a href="${R[key]}">`, `<a href="${R[key]}" aria-current="page">`);
+  // on the Studio page the closing band and the footer stay in Studio's light colours
+  if (key === 'studio') return header + '\n<main>\n' + body.replace('id="trayectoria" data-branch="space"', 'id="trayectoria" data-branch="studio"') + '\n</main>\n' + footer.replace('data-branch="space"', 'data-branch="studio"') + '\n';
   return header + '\n<main>\n' + body + '\n</main>\n' + footer + '\n';
 }
 

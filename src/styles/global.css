@@ -233,7 +233,7 @@ main > section { scroll-margin-top: var(--hh, 65px); }
 .service:hover .fig video { transform: scale(1.04); }
 .service .fig.has-video .tag { color: #ffffff; z-index: 1; text-shadow: 0 1px 6px rgba(0,0,0,.45); }
 .service .fig.has-video::after { content: ""; position: absolute; inset: auto 0 0 0; height: 40%; background: linear-gradient(to top, rgba(0,0,0,.38), rgba(0,0,0,0)); pointer-events: none; }
-.service .fig .tag { position: absolute; left: 12px; bottom: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.service .fig .tag { position: absolute; left: 12px; bottom: 10px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .service ul { list-style: none; margin: 0; padding: 0; font-size: 14px; line-height: 21px; color: var(--muted); }
 .service li { padding: 8px 0; border-top: 1px solid var(--line); }
 
@@ -755,3 +755,19 @@ fieldset { border: 0; margin: 0; padding: 0; }
 /* a vertical wheel over a slider scrolls the page, never the slider itself */
 .cases .track { overflow-y: hidden; }
 .faq details p a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Review 19/11: legibility and rhythm ---------- */
+/* a tab bar that scrolls sideways fades at its edge, so it reads as "there is more" */
+.tabs.is-scrollable { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+.tabs.is-scrollable.at-end { -webkit-mask-image: none; mask-image: none; }
+/* contact page: contact first, questions after, with the same rhythm as the home page */
+main > #contacto:first-child { padding-top: 96px; padding-bottom: 10px; }
+main > #contacto:first-child + #faq { padding-top: 48px; padding-bottom: 96px; }
+@media (min-width: 900px) { main > #contacto:first-child { padding-top: 128px; padding-bottom: 34px; } main > #contacto:first-child + #faq { padding-top: 72px; padding-bottom: 128px; } }
+/* footer on a phone: the two link rows sit together */
+@media (max-width: 760px) {
+  .foot .inner { gap: 8px 24px; }
+  .foot .inner > .logo { margin-bottom: 8px; }
+  .foot-site { width: 100%; }
+  .foot .inner > .proto:last-child { margin-top: 16px; }
+}

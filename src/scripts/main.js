@@ -627,7 +627,8 @@
       if (extra) el.loopAt = [q[0], q[1] + lines.length * L.lh + 4, q[2]];
     }
     function build() {
-      var nm = fig.clientWidth >= 700 ? 'wide' : 'narrow'; if (nm === mode) return; mode = nm; L = LAY[nm];
+      // the network only where its labels stay legible; below that, the vertical list
+      var nm = fig.clientWidth >= 1000 ? 'wide' : 'narrow'; if (nm === mode) return; mode = nm; L = LAY[nm];
       if (nm === 'narrow') { buildList(); return; }
       list = null;
       host.innerHTML = ''; el = {}; edges = []; shown = {}; lastStep = -2; finalOn = syncOn = false;
@@ -1682,6 +1683,34 @@
 
   // a call to action opens the form with its branch already chosen
   document.querySelectorAll('.cta[data-rama]').forEach(function (a) { a.addEventListener('click', function () { var r = document.getElementById('r-' + a.getAttribute('data-rama')); if (r) r.checked = true; }); });
+
+  /* ---------- Legible diagrams: the drawings scale with their box; when that shrinks the labels below 12px on screen, they grow back (up to 30%) ---------- */
+  (function () {
+    var figs = ['eco', 'svc', 'flow', 'why', 'autoflow', 'loop', 'diagram'].map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    function fix(fig) {
+      var svg = fig.querySelector('svg'); if (!svg || !svg.viewBox || !svg.viewBox.baseVal || !svg.viewBox.baseVal.width) return;
+      if (ro && !svg.dataset.watched) { svg.dataset.watched = '1'; ro.observe(svg); }
+      var m = svg.getScreenCTM(), s = m ? Math.hypot(m.a, m.b) : 0; if (!s) return;
+      var texts = [].slice.call(svg.querySelectorAll('text')), mn = Infinity;
+      texts.forEach(function (t) { if (!t.dataset.fs) { t.dataset.fs = parseFloat(getComputedStyle(t).fontSize); t.dataset.fs0 = t.style.fontSize; } mn = Math.min(mn, +t.dataset.fs); });
+      if (!isFinite(mn)) return;
+      // dense drawings (boxes and bars with text inside) only grow a little, so labels never spill out
+      var k = Math.min(fig.id === 'flow' || fig.id === 'why' ? 1.12 : 1.3, Math.max(1, 12 / (mn * s)));
+      texts.forEach(function (t) { t.style.fontSize = k > 1.001 ? (t.dataset.fs * k).toFixed(2) + 'px' : t.dataset.fs0; });
+    }
+    var queued = false, ro = window.ResizeObserver ? new ResizeObserver(function () { all(); }) : null;
+    function all() { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; figs.forEach(fix); }); }
+    figs.forEach(function (f) { new MutationObserver(all).observe(f, { childList: true }); });
+    if (ro) figs.forEach(function (f) { ro.observe(f); });
+    document.querySelectorAll('[role="tab"]').forEach(function (t) { t.addEventListener('click', function () { setTimeout(all, 400); setTimeout(all, 1200); }); });
+    window.addEventListener('load', all); all();
+  })();
+
+  /* ---------- Tab bars that scroll sideways show a soft edge until the end ---------- */
+  document.querySelectorAll('.tabs').forEach(function (bar) {
+    function upd() { var more = bar.scrollWidth > bar.clientWidth + 2; bar.classList.toggle('is-scrollable', more); bar.classList.toggle('at-end', !more || bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2); }
+    bar.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd); upd();
+  });
 
   /* ---------- Form ---------- */
   var form = document.getElementById('form');
