@@ -1,9 +1,9 @@
 {
- "_note": "Datos del titular. CORREO y COLEGIADO vacíos = pendientes: la web usa el formulario de contacto y «en trámite» hasta que se rellenen.",
- "CORREO": "",
+ "_note": "Datos del titular. COLEGIADO vacío = pendiente: la web muestra «en trámite» hasta que se rellene. CORREO vacío = la web usa el formulario de contacto.",
+ "CORREO": "soporte@alaslab.com",
  "TITULAR": "Adrián López Otero",
  "NIF": "53821811V",
  "DOMICILIO": "Calle Martín Echegaray, 28, 36209 Vigo (Pontevedra)",
  "COLEGIADO": "",
- "ACTUALIZADO": "19/11/2026"
+ "ACTUALIZADO": "23/11/2026"
 }

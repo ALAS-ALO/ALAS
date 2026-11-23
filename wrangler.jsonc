@@ -4,6 +4,9 @@
   "main": "./src/worker.ts",
   "compatibility_date": "2026-10-01",
   "observability": { "enabled": true },
+  // Contact-form notice: each lead is also e-mailed (Cloudflare Email Routing).
+  // The destination must be a verified address in Email Routing; soporte@alaslab.com forwards there too.
+  "send_email": [{ "name": "AVISO", "destination_address": "alaslab.soporte@gmail.com" }],
   "assets": {
     "binding": "ASSETS",
     // Pages, sitemap, robots and the API go through the Worker first, so the

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import meta from '../i18n/meta.json';
+import SITE from '../i18n/site.json';
 type Lang = 'es' | 'en' | 'gl';
 interface Props { lang: Lang; title?: string; description?: string; paths?: Record<Lang, string>; noindex?: boolean; home?: boolean; crumbs?: { name: string; path: string }[]; }
 const { lang, title, description, paths: given, noindex, home, crumbs } = Astro.props;
@@ -14,6 +15,7 @@ const ld = home ? JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
     { '@type': 'ProfessionalService', '@id': url('/#alas'), name: 'ALAS', alternateName: ['ALAS Studio', 'ALAS Space'], url: url(paths[lang]), logo: url('/apple-touch-icon.png'), image: url('/og.png'), description: d,
+      ...(/@/.test(SITE.CORREO) ? { email: SITE.CORREO } : {}),
       founder: { '@type': 'Person', name: 'Adrián López Otero', jobTitle: lang === 'en' ? 'Architect' : 'Arquitecto' },
       address: { '@type': 'PostalAddress', postalCode: '36209', addressLocality: 'Vigo', addressRegion: 'Pontevedra', addressCountry: 'ES' }, areaServed: { '@type': 'Country', name: 'España' },
       knowsAbout: ['Arquitectura', 'BIM', 'Rehabilitación', 'Automatización', 'Inteligencia artificial aplicada a la arquitectura'] },
